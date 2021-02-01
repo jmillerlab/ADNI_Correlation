@@ -28,7 +28,8 @@ def main():
             counts_table: DataFrame = counts_table + inter_counts_table
 
     print(counts_table)
-    counts_table.to_csv(COUNTS_TABLE_PATH.format(table_type))
+    counts_table_path: str = COUNTS_TABLE_PATH.format(table_type)
+    counts_table.to_csv(counts_table_path)
 
 
 if __name__ == '__main__':

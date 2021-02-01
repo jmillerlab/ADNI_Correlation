@@ -34,7 +34,7 @@ def main():
     ax.set_title('Significance Level Counts')
     ax.legend()
 
-    save_path: str = 'data/{}-stacked-bar-chart.png'.format(table_type)
+    save_path: str = 'data/counts-graphs/{}-counts-graph.png'.format(table_type)
     plt.savefig(save_path)
 
 
