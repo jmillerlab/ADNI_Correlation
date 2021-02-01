@@ -1,8 +1,6 @@
 """Creates a column comparison dictionary, a mapping of a tuple of 2 column headers to a p-value which is the result of
 a statistical test between those 2 columns. This dictionary represents and is more efficient than a comparison matrix"""
 
-from numpy import array
-from scipy.stats import chi2_contingency, pearsonr, f_oneway
 from os import popen
 from pandas import DataFrame, read_csv
 from pickle import dump
@@ -12,7 +10,7 @@ from multiprocessing import Pool, freeze_support
 from math import ceil
 
 from utils import (
-	get_type, NUMERIC_TYPE, NOMINAL_TYPE, get_col_types, START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY
+	get_type, NUMERIC_TYPE, get_col_types, START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY, compare
 )
 
 """
@@ -230,71 +228,6 @@ def compare_batch(args: tuple) -> dict:
 			result_dict[key] = compare(header1, header2)
 
 	return result_dict
-
-
-def compare(header1: str, header2: str) -> float:
-	"""Computes a correlation between two columns in the data set, given their headers"""
-
-	list1: list = dataset_cols[header1]
-	list2: list = dataset_cols[header2]
-	assert len(list1) == len(list2)
-	type1: str = get_type(header=header1, col_types=col_types)
-	type2: str = get_type(header=header2, col_types=col_types)
-	stat = None
-
-	if type1 == NOMINAL_TYPE and type2 == NOMINAL_TYPE:
-		stat: float = run_contingency(list1=list1, list2=list2)
-	elif type1 == NOMINAL_TYPE and type2 == NUMERIC_TYPE:
-		stat: float = anova(numbers=list2, categories=list1)
-	elif type2 == NOMINAL_TYPE and type1 == NUMERIC_TYPE:
-		stat: float = anova(numbers=list1, categories=list2)
-	elif type1 == NUMERIC_TYPE and type2 == NUMERIC_TYPE:
-		stat: float = run_corr(list1=list1, list2=list2)
-	else:
-		print("ERROR: Non-specified type at " + header1 + " x " + header2)
-		exit(1)
-
-	return stat
-
-
-def run_contingency(list1: list, list2: list) -> float:
-	"""Runs a comparison of two nominal columns"""
-
-	idx: list = list(set(list1))
-	cols: list = list(set(list2))
-	n_cols: int = len(cols)
-	n_rows: int = len(idx)
-	contig_table: list = [[0 for _ in range(n_cols)] for _ in range(n_rows)]
-
-	for i in range(len(list1)):
-		row_num: int = idx.index(list1[i])
-		col_num: int = cols.index(list2[i])
-		contig_table[row_num][col_num] += 1
-
-	contig_table: DataFrame = DataFrame(contig_table, index=idx, columns=cols)
-	p: float = chi2_contingency(contig_table)[1]
-	return p
-
-
-def anova(numbers: list, categories) -> float:
-	"""Computes a correlation using analysis of variance where one column is numeric and the other is nominal"""
-
-	unique_categories: list = list(set(categories))
-	table: list = []
-
-	for c in unique_categories:
-		table.append([numbers[i] for i in range(len(numbers)) if categories[i] == c])
-
-	p: float = f_oneway(*table)[1]
-	return p 
-
-
-def run_corr(list1: list, list2: list) -> float:
-	"""Computes a correlation coefficient between two numeric columns"""
-
-	results: tuple = pearsonr(array(list1), array(list2))
-	p: float = results[1]
-	return p
 
 
 if __name__ == '__main__':
