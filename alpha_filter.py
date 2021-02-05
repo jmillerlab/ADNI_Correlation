@@ -5,17 +5,18 @@ from os import mkdir
 from os.path import isdir, join
 from pickle import dump
 
-from utils import iterate_comp_dicts, ALPHA_FILTERED_DIR
+from utils import iterate_comp_dicts, ALPHA_FILTERED_DIR, get_filter_alpha
 
 
 def main():
     """Main method"""
 
     comp_dict_dir: str = argv[1]
-    alpha: float = float(argv[2])
+    alpha: str = argv[2]
     idx: int = int(argv[3])
     section_size: int = int(argv[4])
 
+    alpha: float = get_filter_alpha(alpha=alpha)
     alpha_filtered_dir: str = ALPHA_FILTERED_DIR.format(alpha)
 
     if not isdir(alpha_filtered_dir):

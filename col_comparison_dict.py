@@ -225,7 +225,7 @@ def compare_batch(args: tuple) -> dict:
 			header1: str = headers[row_idx]
 			header2: str = headers[col_idx]
 			key: tuple = tuple(sorted([header1, header2]))
-			result_dict[key] = compare(header1, header2)
+			result_dict[key] = compare(header1, header2, dataset_cols=dataset_cols, col_types=col_types)
 
 	return result_dict
 

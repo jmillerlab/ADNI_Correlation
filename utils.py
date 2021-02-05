@@ -39,6 +39,23 @@ EXPRESSION_ADNIMERGE_KEY: str = 'Expression ADNIMERGE'
 DATA_TYPE_TABLE_TYPE: str = 'data-type'
 DOMAIN_TABLE_TYPE: str = 'domain'
 MIN_ALPHA: float = 5e-324
+BONFERRONI_ALPHA: str = 'bonferroni'
+MAXIMUM_ALPHA: str = 'maximum'
+SUBSET_PATH: str = 'data/{}-data.csv'
+SUBSET_COMP_DICTS_PATH: str = 'data/{}-comp-dicts'
+
+
+def get_filter_alpha(alpha: str) -> float:
+    """Gets the alpha for filtering the column comparisons"""
+
+    assert alpha == BONFERRONI_ALPHA or alpha == MAXIMUM_ALPHA
+
+    if alpha == BONFERRONI_ALPHA:
+        _, alpha = load(open(ALPHAS_PATH, 'rb'))
+    elif alpha == MAXIMUM_ALPHA:
+        alpha: float = MIN_ALPHA
+
+    return alpha
 
 
 def get_type(header: str, col_types: dict) -> str:

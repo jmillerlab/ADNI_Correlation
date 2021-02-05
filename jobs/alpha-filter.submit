@@ -2,7 +2,7 @@
 
 SCRIPT_NAME="alpha-filter"
 COMP_DICT_DIR="comp-dicts"
-ALPHA="5e-324"
+ALPHA="bonferroni"
 IDX=$1
 SECTION_SIZE=5
 JOB_NAME=${SCRIPT_NAME}-${IDX}
