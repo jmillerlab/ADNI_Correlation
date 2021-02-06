@@ -1,38 +1,57 @@
-import sys
-import re
-import pickle
+"""Creates a subset of the data set by only including patients that have a particular value of a nominal feature"""
 
-dataFile = sys.argv[1]
-dictList = sys.argv[2:]
+from sys import argv
+from pickle import load
 
-def writeFile(fileName, lineList, head):
-	outfile = open(fileName, 'w')
-	outfile.write(head)
-	for line in lineList:
-		outfile.write(line)
-	outfile.close()
-		
+from utils import SUBSET_PATH
 
 
-for d in dictList:
-	dFile = open(d, 'rb')
-	currentDict = pickle.load(dFile)
-	dFile.close()
-	values = [currentDict[key] for key in currentDict]
-	values = list(set(values))
-	print(values)
-	groups = [[] for i in range(len(values))]
-	infile = open(dataFile, 'r')
-	head = next(infile)
-	for line in infile:
-		row = line.strip().split(',') 
-		idx = values.index(currentDict[row[0]])
-		groups[idx].append(line)
-	infile.close()	
-	for i in range(len(groups)):
-		name = dataFile[0:-4] + "_" + d.split("/")[-1][0:-2] + "_" + str(values[i]) + ".csv"
-		writeFile(name, groups[i], head)
+def main():
+	"""MAIN"""
+
+	original_data_file: str = argv[1]
+	feat_map: str = argv[2]
+	cohort: str = argv[3]
+
+	feat_map: str = 'data/feat-maps/{}/{}.p'.format(cohort, feat_map)
+
+	with open(feat_map, 'rb') as f:
+		feat_map: dict = load(f)
+
+	unique_values: list = sorted(set(feat_map.values()))
+	print('The Feature\'s Unique Values:', *unique_values)
+	n_subsets: int = len(unique_values)
+	subsets: list = [[] for _ in range(n_subsets)]
+
+	with open(original_data_file, 'r') as f:
+		headers: str = next(f)
+
+		for line in f:
+			row: list = line.strip().split(',')
+			ptid: str = row[0]
+			val = feat_map[ptid]
+			idx: int = unique_values.index(val)
+			subsets[idx].append(line)
+
+	for i in range(n_subsets):
+		val = unique_values[i]
+
+		if type(val) is str:
+			val = val.lower()
+
+		subset_path: str = SUBSET_PATH.format(val)
+		write_file(subset_path=subset_path, subset=subsets[i], headers=headers)
 
 
-		
-		
+def write_file(subset_path: str, subset: list, headers: str):
+	"""Saves the subset after the correct patients have been selected"""
+
+	with open(subset_path, 'w') as f:
+		f.write(headers)
+
+		for line in subset:
+			f.write(line)
+
+
+if __name__ == '__main__':
+	main()
