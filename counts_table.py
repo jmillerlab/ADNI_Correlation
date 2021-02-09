@@ -5,14 +5,16 @@ from os.path import join
 from pandas import read_csv, DataFrame
 from sys import argv
 
-from utils import INTER_COUNTS_TABLE_DIR, IDX_COL, COUNTS_TABLE_PATH
+from utils import IDX_COL, COUNTS_TABLE_PATH, get_inter_counts_tables_dir
 
 
 def main():
     """Main method"""
 
     table_type: str = argv[1]
-    inter_counts_table_dir: str = INTER_COUNTS_TABLE_DIR.format(table_type)
+    subset: str = argv[2] if len(argv) == 3 else None
+
+    inter_counts_table_dir: str = get_inter_counts_tables_dir(table_type=table_type, subset=subset)
     inter_counts_tables: list = listdir(inter_counts_table_dir)
     counts_table: DataFrame = None
 
@@ -28,7 +30,13 @@ def main():
             counts_table: DataFrame = counts_table + inter_counts_table
 
     print(counts_table)
-    counts_table_path: str = COUNTS_TABLE_PATH.format(table_type)
+
+    if subset is None:
+        table_name: str = table_type
+    else:
+        table_name: str = subset + '-' + table_type
+
+    counts_table_path: str = COUNTS_TABLE_PATH.format(table_name)
     counts_table.to_csv(counts_table_path)
 
 

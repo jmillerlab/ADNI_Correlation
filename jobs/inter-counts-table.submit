@@ -1,18 +1,25 @@
 #!/bin/sh
 
 SCRIPT_NAME="inter-counts-table"
-COMP_DICT_DIR="comp-dicts"
+COMP_DICT_DIR="0.0-comp-dicts" # "comp-dicts"
 SUPER_ALPHA="1e-100"
 IDX=$1
-SECTION_SIZE=5
+SECTION_SIZE=1 # 5
 TABLE_TYPE=$2
-JOB_NAME=${SCRIPT_NAME}-${IDX}-${TABLE_TYPE}
+SUBSET=$3
+
+if [ -z "$SUBSET" ]
+then
+  JOB_NAME=${SCRIPT_NAME}-${IDX}-${TABLE_TYPE}
+else
+  JOB_NAME=${SCRIPT_NAME}-${IDX}-${TABLE_TYPE}-${SUBSET}
+fi
 
 sbatch -J $JOB_NAME \
-    --time=02-00:00:00 \
+    --time=00-01:00:00 \
     --nodes=1 \
     --ntasks=1 \
     --mem=64G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
-    jobs/${SCRIPT_NAME}.sh $COMP_DICT_DIR $SUPER_ALPHA $IDX $SECTION_SIZE $TABLE_TYPE
+    jobs/${SCRIPT_NAME}.sh $COMP_DICT_DIR $SUPER_ALPHA $IDX $SECTION_SIZE $TABLE_TYPE $SUBSET

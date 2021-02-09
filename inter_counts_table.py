@@ -1,16 +1,15 @@
 """Creates a table with counts of the comparisons with p-values that reach various significance levels"""
 
 from sys import argv
-from os import mkdir
-from os.path import join, isdir
+from os.path import join
 from pickle import load
 from pandas import DataFrame
 
 from utils import (
     ALPHAS_PATH, INSIGNIFICANT_KEY, UNCORRECTED_ALPHA_KEY, CORRECTED_ALPHA_KEY, SUPER_ALPHA_KEY, MAX_SIGNIFICANCE_KEY,
-    get_col_types, IDX_COL, INTER_COUNTS_TABLE_DIR, iterate_comp_dicts, get_comparison_type, NUM_NUM_KEY, NOM_NOM_KEY,
-    NUM_NOM_KEY, MRI_MRI_KEY, EXPRESSION_EXPRESSION_KEY, ADNIMERGE_ADNIMERGE_KEY, MRI_EXPRESSION_KEY, MRI_ADNIMERGE_KEY,
-    EXPRESSION_ADNIMERGE_KEY, DATA_TYPE_TABLE_TYPE, DOMAIN_TABLE_TYPE, MIN_ALPHA
+    get_col_types, IDX_COL, iterate_comp_dicts, get_comparison_type, NUM_NUM_KEY, NOM_NOM_KEY, NUM_NOM_KEY, MRI_MRI_KEY,
+    EXPRESSION_EXPRESSION_KEY, ADNIMERGE_ADNIMERGE_KEY, MRI_EXPRESSION_KEY, MRI_ADNIMERGE_KEY, EXPRESSION_ADNIMERGE_KEY,
+    DATA_TYPE_TABLE_TYPE, DOMAIN_TABLE_TYPE, MIN_ALPHA, get_inter_counts_tables_dir
 )
 
 TOTAL_KEY: str = 'Total'
@@ -27,6 +26,7 @@ def main():
     idx: int = int(argv[3])
     section_size: int = int(argv[4])
     table_type: str = argv[5]
+    subset: str = argv[6] if len(argv) == 7 else None
 
     table: DataFrame = make_table(table_type=table_type)
 
@@ -42,12 +42,7 @@ def main():
     )
 
     print(table)
-
-    inter_counts_tables_dir: str = INTER_COUNTS_TABLE_DIR.format(table_type)
-
-    if not isdir(inter_counts_tables_dir):
-        mkdir(inter_counts_tables_dir)
-
+    inter_counts_tables_dir: str = get_inter_counts_tables_dir(table_type=table_type, subset=subset)
     counts_table_path: str = join(inter_counts_tables_dir, '{}-{}.csv'.format(start_idx, stop_idx))
     table.to_csv(counts_table_path)
 

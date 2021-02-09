@@ -2,6 +2,7 @@
 
 source ../env/bin/activate
 
-COMP_TYPE=$1
+TABLE_TYPE=$1
+SUBSET=$2
 
-python3 counts_table.py $COMP_TYPE
+python3 counts_table.py $TABLE_TYPE $SUBSET

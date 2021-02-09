@@ -1,8 +1,8 @@
 """Contains shared data and functions"""
 
 from pickle import load
-from os import listdir
-from os.path import join
+from os import listdir, mkdir
+from os.path import join, isdir
 from time import time
 from tqdm import tqdm
 from scipy.stats import chi2_contingency, pearsonr, f_oneway
@@ -19,7 +19,7 @@ STOP_IDX_KEY: str = 'Stop Index'
 N_ROWS_KEY: str = 'Number of Rows'
 ALPHAS_PATH: str = 'data/alphas.p'
 INTER_COUNTS_TABLE_DIR: str = 'data/inter-counts-tables/{}'
-COUNTS_TABLE_PATH: str = 'data/counts-tables/{}-counts.csv'
+COUNTS_TABLE_PATH: str = 'data/counts-tables/{}.csv'
 ALPHA_FILTERED_DIR: str = 'data/alpha-filtered-{}'
 INSIGNIFICANT_KEY: str = 'No Significance'
 UNCORRECTED_ALPHA_KEY: str = 'Below Uncorrected Alpha'
@@ -43,6 +43,22 @@ BONFERRONI_ALPHA: str = 'bonferroni'
 MAXIMUM_ALPHA: str = 'maximum'
 SUBSET_PATH: str = 'data/{}-data.csv'
 SUBSET_COMP_DICTS_PATH: str = 'data/{}-comp-dicts'
+
+
+def get_inter_counts_tables_dir(table_type: str, subset: str) -> str:
+    """Gets the sub directory of the inter-counts-tables directory to store the inter counts tables"""
+
+    if subset is None:
+        sub_dir: str = table_type
+    else:
+        sub_dir: str = subset + '-' + table_type
+
+    inter_counts_tables_dir: str = INTER_COUNTS_TABLE_DIR.format(sub_dir)
+
+    if not isdir(inter_counts_tables_dir):
+        mkdir(inter_counts_tables_dir)
+
+    return inter_counts_tables_dir
 
 
 def get_filter_alpha(alpha: str) -> float:
