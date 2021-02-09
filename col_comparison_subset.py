@@ -6,6 +6,7 @@ from os.path import join, isdir
 from pickle import load, dump
 from pandas import read_csv, DataFrame
 from tqdm import tqdm
+from time import time
 
 from utils import (
     get_filter_alpha, BONFERRONI_ALPHA, ALPHA_FILTERED_DIR, compare, get_col_types, SUBSET_PATH, SUBSET_COMP_DICTS_PATH
@@ -34,11 +35,15 @@ def main():
     assert filtered_comps.endswith('.p')
 
     filtered_comps: str = join(alpha_filtered_dir, filtered_comps)
+    print('Loading Filtered Comparisons at:', filtered_comps)
     filtered_comps: dict = load(open(filtered_comps, 'rb'))
     print('Number Of Filtered Comparisons:', len(filtered_comps))
+    t1: float = time()
     dataset_cols: dict = get_dataset_cols(subset=subset, filtered_comps=filtered_comps)
+    print('Time Extracting The Data Set Columns: {:.2f} Minutes'.format((time() - t1) / 60))
     print('Number Of Features To Re-Analyze:', len(dataset_cols))
     n_skipped: int = 0
+    t1: float = time()
 
     for (feat1, feat2), p in tqdm(filtered_comps.items()):
         assert p < alpha
@@ -51,6 +56,7 @@ def main():
         key: tuple = tuple(sorted([feat1, feat2]))
         new_comps[key] = compare(header1=feat1, header2=feat2, dataset_cols=dataset_cols, col_types=col_types)
 
+    print('Time Re-Analyzing On The Sub Set: {:.2f} Minutes'.format((time() - t1) / 60))
     print('Number Of Comparisons Skipped Due To One Unique Value In Sub Set:', n_skipped)
     new_comps_path: str = '{}.p'.format(idx)
     new_comps_path: str = join(comp_dicts_path, new_comps_path)
