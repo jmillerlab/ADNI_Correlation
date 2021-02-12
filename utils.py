@@ -4,7 +4,6 @@ from pickle import load
 from os import listdir, mkdir
 from os.path import join, isdir
 from time import time
-from tqdm import tqdm
 from scipy.stats import chi2_contingency, pearsonr, f_oneway
 from numpy import array
 from pandas import DataFrame
@@ -129,7 +128,7 @@ def iterate_comp_dicts(comp_dict_dir: str, idx: int, section_size: int, func: ca
         print('Total Number Of Comparisons:', n_comparisons)
         time1: float = time()
 
-        for (feat1, feat2), p in tqdm(comp_dict.items()):
+        for (feat1, feat2), p in comp_dict.items():
             func(feat1=feat1, feat2=feat2, p=p, **kwargs)
 
         time2: float = time()
