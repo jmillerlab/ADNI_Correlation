@@ -5,7 +5,7 @@ COMP_DICT_DIR="comp-dicts"
 ALPHA="bonferroni"
 IDX=$1
 SECTION_SIZE=5
-JOB_NAME=${SCRIPT_NAME}-${IDX}
+JOB_NAME=${SCRIPT_NAME}-${IDX}-${ALPHA}
 
 sbatch -J $JOB_NAME \
     --time=00-01:00:00 \

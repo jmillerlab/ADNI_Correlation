@@ -5,7 +5,7 @@ from os import mkdir
 from os.path import isdir, join
 from pickle import dump
 
-from utils import iterate_comp_dicts, ALPHA_FILTERED_DIR, get_filter_alpha
+from utils import iterate_comp_dicts, ALPHA_FILTERED_DIR, get_significant_alpha
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
     idx: int = int(argv[3])
     section_size: int = int(argv[4])
 
-    alpha: float = get_filter_alpha(alpha=alpha)
+    alpha: float = get_significant_alpha(alpha=alpha)
     alpha_filtered_dir: str = ALPHA_FILTERED_DIR.format(alpha)
 
     if not isdir(alpha_filtered_dir):

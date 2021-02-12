@@ -9,7 +9,7 @@ from tqdm import tqdm
 from time import time
 
 from utils import (
-    get_filter_alpha, BONFERRONI_ALPHA, ALPHA_FILTERED_DIR, compare, get_col_types, SUBSET_PATH, SUBSET_COMP_DICTS_PATH
+    get_significant_alpha, BONFERRONI_ALPHA, ALPHA_FILTERED_DIR, compare, get_col_types, SUBSET_PATH, SUBSET_COMP_DICTS_PATH
 )
 
 
@@ -24,7 +24,7 @@ def main():
     if not isdir(comp_dicts_path):
         mkdir(comp_dicts_path)
 
-    alpha: float = get_filter_alpha(alpha=BONFERRONI_ALPHA)
+    alpha: float = get_significant_alpha(alpha=BONFERRONI_ALPHA)
     alpha_filtered_dir: str = ALPHA_FILTERED_DIR.format(alpha)
 
     col_types: dict = get_col_types()
