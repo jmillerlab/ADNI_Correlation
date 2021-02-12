@@ -61,7 +61,7 @@ def get_inter_counts_tables_dir(table_type: str, subset: str) -> str:
 
 
 def get_significant_alpha(alpha: str) -> float:
-    """Gets the alpha for either bonferroni or maximum significance the column comparisons"""
+    """Gets the alpha for either bonferroni or maximum significance"""
 
     assert alpha == BONFERRONI_ALPHA or alpha == MAXIMUM_ALPHA
 
