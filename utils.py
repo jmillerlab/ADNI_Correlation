@@ -177,6 +177,12 @@ def get_comparison_type(feat1: str, feat2: str, col_types: dict):
     return comp_type
 
 
+def get_comp_key(feat1: str, feat2: str) -> tuple:
+    """Creates the key for a comparison mapping"""
+
+    return tuple(sorted([feat1, feat2]))
+
+
 def compare(header1: str, header2: str, dataset_cols: dict, col_types: dict) -> float:
     """Computes a correlation between two columns in the data set, given their headers"""
 

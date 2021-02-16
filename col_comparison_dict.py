@@ -10,7 +10,7 @@ from multiprocessing import Pool, freeze_support
 from math import ceil
 
 from utils import (
-	get_type, NUMERIC_TYPE, get_col_types, START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY, compare
+	get_type, NUMERIC_TYPE, get_col_types, START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY, compare, get_comp_key
 )
 
 """
@@ -224,7 +224,7 @@ def compare_batch(args: tuple) -> dict:
 		for col_idx in range(col_start, col_stop):
 			header1: str = headers[row_idx]
 			header2: str = headers[col_idx]
-			key: tuple = tuple(sorted([header1, header2]))
+			key: tuple = get_comp_key(feat1=header1, feat2=header2)
 			result_dict[key] = compare(header1, header2, dataset_cols=dataset_cols, col_types=col_types)
 
 	return result_dict

@@ -9,7 +9,8 @@ from tqdm import tqdm
 from time import time
 
 from utils import (
-    get_significant_alpha, BONFERRONI_ALPHA, ALPHA_FILTERED_DIR, compare, get_col_types, SUBSET_PATH, SUBSET_COMP_DICTS_PATH
+    get_significant_alpha, BONFERRONI_ALPHA, ALPHA_FILTERED_DIR, compare, get_col_types, SUBSET_PATH, get_comp_key,
+    SUBSET_COMP_DICTS_PATH
 )
 
 
@@ -53,7 +54,7 @@ def main():
             n_skipped += 1
             continue
 
-        key: tuple = tuple(sorted([feat1, feat2]))
+        key: tuple = get_comp_key(feat1=feat1, feat2=feat2)
         new_comps[key] = compare(header1=feat1, header2=feat2, dataset_cols=dataset_cols, col_types=col_types)
 
     print('Time Re-Analyzing On The Sub Set: {:.2f} Minutes'.format((time() - t1) / 60))
