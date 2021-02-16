@@ -2,7 +2,7 @@
 
 SCRIPT_NAME="alpha-filter"
 COMP_DICT_DIR="comp-dicts"
-ALPHA="bonferroni"
+ALPHA="maximum"
 IDX=$1
 SECTION_SIZE=5
 JOB_NAME=${SCRIPT_NAME}-${IDX}-${ALPHA}
@@ -11,7 +11,7 @@ sbatch -J $JOB_NAME \
     --time=00-01:00:00 \
     --nodes=1 \
     --ntasks=1 \
-    --mem=128G \
+    --mem=64G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
     jobs/${SCRIPT_NAME}.sh $COMP_DICT_DIR $ALPHA $IDX $SECTION_SIZE
