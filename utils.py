@@ -7,6 +7,7 @@ from time import time
 from scipy.stats import chi2_contingency, pearsonr, f_oneway
 from numpy import array
 from pandas import DataFrame
+from tqdm import tqdm
 
 
 NUMERIC_TYPE: str = 'numeric'
@@ -81,6 +82,23 @@ def get_type(header: str, col_types: dict) -> str:
         return NUMERIC_TYPE
 
     return col_types[header]
+
+
+def iterate_filtered_dicts(alpha: str, func: callable, **kwargs):
+    """Iterates through the comparisons that were filtered for a given alpha"""
+
+    alpha: float = get_significant_alpha(alpha=alpha)
+    alpha_filtered_dir: str = ALPHA_FILTERED_DIR.format(alpha)
+    filtered_dicts: list = (listdir(alpha_filtered_dir))
+
+    for filtered_dict in tqdm(filtered_dicts):
+        filtered_dict: str = join(alpha_filtered_dir, filtered_dict)
+        filtered_dict: dict = load(open(filtered_dict, 'rb'))
+
+        for (feat1, feat2), p in filtered_dict.items():
+            assert p < alpha
+
+            func(feat1=feat1, feat2=feat2, **kwargs)
 
 
 def iterate_comp_dicts(comp_dict_dir: str, idx: int, section_size: int, func: callable, **kwargs) -> tuple:

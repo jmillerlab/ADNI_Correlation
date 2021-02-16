@@ -1,13 +1,9 @@
 """Makes a mapping from feature to the number of its comparisons that have a maximum significance (lowest possible p)"""
 
-from os import listdir
-from os.path import join
-from pickle import load
 from pandas import DataFrame
 from sys import argv
-from tqdm import tqdm
 
-from utils import ALPHA_FILTERED_DIR, get_significant_alpha
+from utils import iterate_filtered_dicts
 
 FEAT_KEY: str = 'Feature'
 FREQ_KEY: str = 'Frequency'
@@ -18,20 +14,8 @@ def main():
 
     alpha: str = argv[1]
 
-    alpha: float = get_significant_alpha(alpha=alpha)
-    alpha_filtered_dir: str = ALPHA_FILTERED_DIR.format(alpha)
-    filtered_dicts: list = (listdir(alpha_filtered_dir))
     significance_frequencies: dict = {}
-
-    for filtered_dict in tqdm(filtered_dicts):
-        filtered_dict: str = join(alpha_filtered_dir, filtered_dict)
-        filtered_dict: dict = load(open(filtered_dict, 'rb'))
-
-        for (feat1, feat2), p in filtered_dict.items():
-            assert p < alpha
-
-            add_frequency(feat=feat1, significance_frequencies=significance_frequencies)
-            add_frequency(feat=feat2, significance_frequencies=significance_frequencies)
+    iterate_filtered_dicts(alpha=alpha, func=add_frequencies, significance_frequencies=significance_frequencies)
 
     significance_frequencies: list = [
         (key, significance_frequencies[key]) for key in sorted(
@@ -54,6 +38,13 @@ def main():
 
     table_path: str = 'data/significance-frequencies-{}.csv'.format(alpha)
     table.to_csv(table_path, index=False)
+
+
+def add_frequencies(feat1: str, feat2: str, significance_frequencies: dict):
+    """Increments the frequencies of two features in a comparison"""
+
+    add_frequency(feat=feat1, significance_frequencies=significance_frequencies)
+    add_frequency(feat=feat2, significance_frequencies=significance_frequencies)
 
 
 def add_frequency(feat: str, significance_frequencies: dict):
