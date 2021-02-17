@@ -161,7 +161,7 @@ def get_col_types() -> dict:
     return load(open(COL_TYPES_PICKLE_PATH, 'rb'))
 
 
-def get_comparison_type(feat1: str, feat2: str, col_types: dict):
+def get_comparison_type(feat1: str, feat2: str, col_types: dict) -> str:
     """Returns the type of the comparison which is the data type of the first feature and that of the other feature"""
 
     type1: str = get_type(header=feat1, col_types=col_types)
