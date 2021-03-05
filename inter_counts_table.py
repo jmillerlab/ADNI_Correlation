@@ -44,6 +44,7 @@ def main():
     print(table)
     inter_counts_tables_dir: str = get_inter_counts_tables_dir(table_type=table_type, subset=subset)
     counts_table_path: str = join(inter_counts_tables_dir, '{}-{}.csv'.format(start_idx, stop_idx))
+    print(counts_table_path)
     table.to_csv(counts_table_path)
 
 
