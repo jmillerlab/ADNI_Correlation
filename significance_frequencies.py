@@ -1,6 +1,6 @@
 """Makes a mapping from feature to the number of its comparisons that have a maximum significance (lowest possible p)"""
 
-from pandas import DataFrame
+from pandas import DataFrame, unique
 from sys import argv
 
 from utils import iterate_filtered_dicts
@@ -35,6 +35,8 @@ def main():
             FREQ_KEY: frequency,
         }
         table: DataFrame = table.append(row, ignore_index=True)
+
+    assert len(unique(table[FEAT_KEY])) == len(table[FEAT_KEY])
 
     table_path: str = 'data/significance-frequencies-{}.csv'.format(alpha)
     table.to_csv(table_path, index=False)
