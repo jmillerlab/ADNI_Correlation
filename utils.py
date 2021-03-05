@@ -84,7 +84,7 @@ def get_type(header: str, col_types: dict) -> str:
     return col_types[header]
 
 
-def iterate_filtered_dicts(alpha: str, func: callable, **kwargs):
+def iterate_filtered_dicts(alpha: str, func: callable, use_p: bool = False, **kwargs) -> str:
     """Iterates through the comparisons that were filtered for a given alpha"""
 
     alpha: float = get_significant_alpha(alpha=alpha)
@@ -98,7 +98,12 @@ def iterate_filtered_dicts(alpha: str, func: callable, **kwargs):
         for (feat1, feat2), p in filtered_dict.items():
             assert p < alpha
 
-            func(feat1=feat1, feat2=feat2, **kwargs)
+            if use_p:
+                func(feat1=feat1, feat2=feat2, p=p, **kwargs)
+            else:
+                func(feat1=feat1, feat2=feat2, **kwargs)
+
+    return alpha_filtered_dir
 
 
 def iterate_comp_dicts(comp_dict_dir: str, idx: int, section_size: int, func: callable, **kwargs) -> tuple:
