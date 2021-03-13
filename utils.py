@@ -43,6 +43,12 @@ BONFERRONI_ALPHA: str = 'bonferroni'
 MAXIMUM_ALPHA: str = 'maximum'
 SUBSET_PATH: str = 'data/{}-data.csv'
 SUBSET_COMP_DICTS_PATH: str = 'data/{}-comp-dicts'
+SIGNIFICANT_FREQUENCIES_CSV_PATH: str = 'data/significance-frequencies-{}.csv'
+ADNIMERGE_KEY: str = 'ADNIMERGE'
+EXPRESSION_KEY: str = 'Gene Expression'
+MRI_KEY: str = 'MRI'
+FREQ_KEY: str = 'Frequency'
+DOMAIN_KEY: str = 'Domain'
 
 
 def get_inter_counts_tables_dir(table_type: str, subset: str) -> str:
@@ -82,6 +88,18 @@ def get_type(header: str, col_types: dict) -> str:
         return NUMERIC_TYPE
 
     return col_types[header]
+
+
+def get_domain(feat: str, col_types: dict) -> str:
+    """Gets the domain of a feature, either ADNIMERGE, Expression, or MRI"""
+
+    if feat in col_types:
+        return ADNIMERGE_KEY
+
+    if 'MRI_' in feat:
+        return MRI_KEY
+
+    return EXPRESSION_KEY
 
 
 def iterate_filtered_dicts(alpha: str, func: callable, use_p: bool = False, **kwargs) -> str:

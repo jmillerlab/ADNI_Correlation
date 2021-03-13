@@ -9,13 +9,11 @@ from utils import (
     ALPHAS_PATH, INSIGNIFICANT_KEY, UNCORRECTED_ALPHA_KEY, CORRECTED_ALPHA_KEY, SUPER_ALPHA_KEY, MAX_SIGNIFICANCE_KEY,
     get_col_types, IDX_COL, iterate_comp_dicts, get_comparison_type, NUM_NUM_KEY, NOM_NOM_KEY, NUM_NOM_KEY, MRI_MRI_KEY,
     EXPRESSION_EXPRESSION_KEY, ADNIMERGE_ADNIMERGE_KEY, MRI_EXPRESSION_KEY, MRI_ADNIMERGE_KEY, EXPRESSION_ADNIMERGE_KEY,
-    DATA_TYPE_TABLE_TYPE, DOMAIN_TABLE_TYPE, MIN_ALPHA, get_inter_counts_tables_dir
+    DATA_TYPE_TABLE_TYPE, DOMAIN_TABLE_TYPE, MIN_ALPHA, get_inter_counts_tables_dir, get_domain, ADNIMERGE_KEY,
+    EXPRESSION_KEY, MRI_KEY
 )
 
 TOTAL_KEY: str = 'Total'
-ADNIMERGE_KEY: int = 0
-EXPRESSION_KEY: int = 1
-MRI_KEY: int = 2
 
 
 def main():
@@ -131,18 +129,6 @@ def get_comparison_domains(feat1: str, feat2: str, col_types: dict) -> str:
            (domain1 == ADNIMERGE_KEY and domain2 == EXPRESSION_KEY)
 
     return EXPRESSION_ADNIMERGE_KEY
-
-
-def get_domain(feat: str, col_types: dict) -> int:
-    """Gets the domain of a feature, either ADNIMERGE, Expression, or MRI"""
-
-    if feat in col_types:
-        return ADNIMERGE_KEY
-
-    if 'MRI_' in feat:
-        return MRI_KEY
-
-    return EXPRESSION_KEY
 
 
 if __name__ == '__main__':

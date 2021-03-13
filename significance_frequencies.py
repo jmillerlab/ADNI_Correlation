@@ -3,10 +3,11 @@
 from pandas import DataFrame, unique
 from sys import argv
 
-from utils import iterate_filtered_dicts
+from utils import (
+    iterate_filtered_dicts, SIGNIFICANT_FREQUENCIES_CSV_PATH, get_domain, get_col_types, FREQ_KEY, DOMAIN_KEY
+)
 
 FEAT_KEY: str = 'Feature'
-FREQ_KEY: str = 'Frequency'
 
 
 def main():
@@ -23,22 +24,23 @@ def main():
         )
     ]
 
-    print('Number Of Features That Show Up In At Least One Significance Comparison: {} | For Alpha: {}'.format(
-        len(significance_frequencies), alpha
-    ))
-
-    table: DataFrame = DataFrame(columns=[FEAT_KEY, FREQ_KEY])
+    col_types: dict = get_col_types()
+    table: DataFrame = DataFrame(columns=[FEAT_KEY, FREQ_KEY, DOMAIN_KEY])
 
     for feat, frequency in significance_frequencies:
+        domain: str = get_domain(feat=feat, col_types=col_types)
+
         row: dict = {
             FEAT_KEY: feat,
             FREQ_KEY: frequency,
+            DOMAIN_KEY: domain
         }
+
         table: DataFrame = table.append(row, ignore_index=True)
 
-    assert len(unique(table[FEAT_KEY])) == len(table[FEAT_KEY])
+    assert len(unique(table[FEAT_KEY])) == len(table)
 
-    table_path: str = 'data/significance-frequencies-{}.csv'.format(alpha)
+    table_path: str = SIGNIFICANT_FREQUENCIES_CSV_PATH.format(alpha)
     table.to_csv(table_path, index=False)
 
 
