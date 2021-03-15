@@ -29,36 +29,42 @@ def main():
     alpha_filtered_dir: str = ALPHA_FILTERED_DIR.format(alpha)
 
     col_types: dict = get_col_types()
-    new_comps: dict = {}
-    filtered_comps: list = sorted(listdir(alpha_filtered_dir))
-    filtered_comps: str = filtered_comps[idx]
+    new_comps: list = sorted(listdir(alpha_filtered_dir))
+    new_comps: str = new_comps[idx]
 
-    assert filtered_comps.endswith('.p')
+    assert new_comps.endswith('.p')
 
-    filtered_comps: str = join(alpha_filtered_dir, filtered_comps)
-    print('Loading Filtered Comparisons at:', filtered_comps)
-    filtered_comps: dict = load(open(filtered_comps, 'rb'))
-    print('Number Of Filtered Comparisons:', len(filtered_comps))
+    new_comps: str = join(alpha_filtered_dir, new_comps)
+    print('Loading Filtered Comparisons at:', new_comps)
+    new_comps: dict = load(open(new_comps, 'rb'))
+    original_len: int = len(new_comps)
+    print('Number Of Filtered Comparisons (Original Length):', original_len)
     t1: float = time()
-    dataset_cols: dict = get_dataset_cols(subset=subset, filtered_comps=filtered_comps)
+    dataset_cols: dict = get_dataset_cols(subset=subset, filtered_comps=new_comps)
     print('Time Extracting The Data Set Columns: {:.2f} Minutes'.format((time() - t1) / 60))
     print('Number Of Features To Re-Analyze:', len(dataset_cols))
     n_skipped: int = 0
     t1: float = time()
 
-    for (feat1, feat2), p in tqdm(filtered_comps.items()):
+    for (feat1, feat2), p in tqdm(list(new_comps.items())):
         assert p < alpha
+
+        key: tuple = get_comp_key(feat1=feat1, feat2=feat2)
 
         if len(set(dataset_cols[feat1])) == 1 or len(set(dataset_cols[feat2])) == 1:
             # We can't compare features that have only one unique value as a result of the sub setting
             n_skipped += 1
-            continue
+            del new_comps[key]
+        else:
+            new_comps[key] = compare(header1=feat1, header2=feat2, dataset_cols=dataset_cols, col_types=col_types)
 
-        key: tuple = get_comp_key(feat1=feat1, feat2=feat2)
-        new_comps[key] = compare(header1=feat1, header2=feat2, dataset_cols=dataset_cols, col_types=col_types)
+    new_len: int = len(new_comps)
+
+    assert new_len + n_skipped == original_len
 
     print('Time Re-Analyzing On The Sub Set: {:.2f} Minutes'.format((time() - t1) / 60))
     print('Number Of Comparisons Skipped Due To One Unique Value In Sub Set:', n_skipped)
+    print('Number Of Comparisons Left (New Length):', new_len)
     new_comps_path: str = '{}.p'.format(idx)
     new_comps_path: str = join(comp_dicts_path, new_comps_path)
     dump(new_comps, open(new_comps_path, 'wb'))
