@@ -1,14 +1,14 @@
 #!/bin/sh
 
 SCRIPT_NAME="significance-frequencies"
-ALPHA="maximum"
+ALPHA="bonferroni"
 JOB_NAME=${SCRIPT_NAME}-${ALPHA}
 
 sbatch -J $JOB_NAME \
-    --time=00-12:00:00 \
+    --time=02-00:00:00 \
     --nodes=1 \
     --ntasks=1 \
-    --mem=64G \
+    --mem=128G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
     jobs/${SCRIPT_NAME}.sh $ALPHA
