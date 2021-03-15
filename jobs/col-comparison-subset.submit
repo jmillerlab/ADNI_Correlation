@@ -6,10 +6,10 @@ SUBSET=$2
 JOB_NAME=$SCRIPT_NAME-${IDX}-${SUBSET}
 
 sbatch -J $JOB_NAME \
-    --time=00-2:00:00 \
+    --time=00-6:00:00 \
     --nodes=1 \
     --ntasks=1 \
-    --mem=128G \
+    --mem=64G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
     jobs/${SCRIPT_NAME}.sh $IDX $SUBSET
