@@ -5,12 +5,17 @@ from pandas import DataFrame, read_csv, Series
 from matplotlib.pyplot import subplots, savefig, title as set_title, xlabel, ylabel
 from os import mkdir
 from os.path import join, isdir
+from numpy import mean, std, min, max
 
 from utils import (
     SIGNIFICANT_FREQUENCIES_CSV_PATH, ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY, FREQ_KEY, DOMAIN_KEY, IDX_COL
 )
 
 SUMMARY_DIR: str = 'data/significance-summary/'
+AVG_KEY: str = 'Average'
+STD_KEY: str = 'Standard Deviation'
+MIN_KEY: str = 'Minimum'
+MAX_KEY: str = 'Maximum'
 
 
 def main():
@@ -30,7 +35,7 @@ def main():
     ))
 
     save_histograms(significance_frequencies=significance_frequencies, n_histogram_bins=n_histogram_bins, alpha=alpha)
-    save_table(significance_frequencies=significance_frequencies, alpha=alpha)
+    save_tables(significance_frequencies=significance_frequencies, alpha=alpha)
 
 
 def print_count(domain_key: str, counts: dict):
@@ -120,11 +125,47 @@ def regular_histogram(frequencies: Series, n_histogram_bins: int, title: str):
     set_title(title)
 
 
-def save_table(significance_frequencies: DataFrame, alpha: str):
-    """Counts the the number of features with comparison frequencies that are within certain ranges"""
+def save_tables(significance_frequencies: DataFrame, alpha: str):
+    """Creates the tables that complement the histograms"""
 
+    idx_col: list = [ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY]
+
+    table: dict = {
+        IDX_COL: idx_col,
+        AVG_KEY: [0.0] * len(idx_col),
+        STD_KEY: [0.0] * len(idx_col),
+        MIN_KEY: [0.0] * len(idx_col),
+        MAX_KEY: [0.0] * len(idx_col)
+    }
+
+    table: DataFrame = DataFrame(table)
+    table: DataFrame = table.set_index(IDX_COL)
+
+    for domain in [ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY]:
+        set_val(
+            table=table, domain=domain, op=mean, header=AVG_KEY,
+            significance_frequencies=significance_frequencies
+        )
+
+        set_val(
+            table=table, domain=domain, op=std, header=STD_KEY,
+            significance_frequencies=significance_frequencies
+        )
+
+        set_val(
+            table=table, domain=domain, op=min, header=MIN_KEY,
+            significance_frequencies=significance_frequencies
+        )
+
+        set_val(
+            table=table, domain=domain, op=max, header=MAX_KEY,
+            significance_frequencies=significance_frequencies
+        )
+
+    save_path: str = join(SUMMARY_DIR, 'basic-stats-{}.csv'.format(alpha))
+    table.to_csv(save_path)
     freq_thresholds: list = [0, 5, 10, 20, 50, 100, 12017]
-    table: DataFrame = make_start_table(freq_thresholds=freq_thresholds)
+    table: DataFrame = make_start_counts_table(freq_thresholds=freq_thresholds, idx_col=idx_col)
 
     for i in range(len(significance_frequencies)):
         row: Series = significance_frequencies.loc[i]
@@ -145,10 +186,20 @@ def save_table(significance_frequencies: DataFrame, alpha: str):
     table.to_csv(save_path)
 
 
-def make_start_table(freq_thresholds: list) -> DataFrame:
-    """Creates the table with counts of 0"""
+def set_val(table: DataFrame, domain: str, op: callable, header: str, significance_frequencies: DataFrame):
+    """Computes a value in the table with basic stats"""
 
-    idx_col: list = [ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY]
+    frequencies: DataFrame = significance_frequencies.loc[
+        significance_frequencies[DOMAIN_KEY] == domain
+        ]
+
+    frequencies: Series = frequencies[FREQ_KEY]
+    val: float = op(frequencies)
+    table[header][domain] = val
+
+
+def make_start_counts_table(freq_thresholds: list, idx_col: list) -> DataFrame:
+    """Creates the feature counts table with counts of 0"""
 
     table: dict = {
         IDX_COL: idx_col
