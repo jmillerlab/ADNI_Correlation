@@ -38,12 +38,6 @@ def main():
     save_tables(significance_frequencies=significance_frequencies, alpha=alpha)
 
 
-def print_count(domain_key: str, counts: dict):
-    """Prints the counts above or below the threshold for a given domain"""
-
-    print('{}: {}'.format(domain_key, counts[domain_key]))
-
-
 def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, alpha: str):
     """Saves the histograms for the total set of frequencies and the set for each domain"""
 
