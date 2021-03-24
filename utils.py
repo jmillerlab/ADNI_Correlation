@@ -47,7 +47,10 @@ SIGNIFICANT_FREQUENCIES_CSV_PATH: str = 'data/significance-frequencies-{}.csv'
 ADNIMERGE_KEY: str = 'ADNIMERGE'
 EXPRESSION_KEY: str = 'Gene Expression'
 MRI_KEY: str = 'MRI'
-FREQ_KEY: str = 'Frequency'
+TOTAL_FREQ_KEY: str = 'Total Frequency'
+ADNIMERGE_FREQ_KEY: str = 'ADNIMERGE Frequency'
+EXPRESSION_FREQ_KEY: str = 'Gene Expression Frequency'
+MRI_FREQ_KEY: str = 'MRI Frequency'
 DOMAIN_KEY: str = 'Domain'
 
 
