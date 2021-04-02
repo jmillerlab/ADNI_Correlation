@@ -3,13 +3,14 @@
 SCRIPT_NAME="col-comparison-subset"
 IDX=$1
 SUBSET=$2
+MEM=$3
 JOB_NAME=$SCRIPT_NAME-${IDX}-${SUBSET}
 
 sbatch -J $JOB_NAME \
     --time=00-6:00:00 \
     --nodes=1 \
     --ntasks=1 \
-    --mem=64G \
+    --mem=${MEM}G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
     jobs/${SCRIPT_NAME}.sh $IDX $SUBSET
