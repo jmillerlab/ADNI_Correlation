@@ -2,6 +2,7 @@
 
 from pandas import DataFrame, unique
 from sys import argv
+from tqdm import tqdm
 
 from utils import (
     iterate_filtered_dicts, SIGNIFICANT_FREQUENCIES_CSV_PATH, get_domain, get_col_types, ADNIMERGE_FREQ_KEY,
@@ -39,7 +40,7 @@ def main():
         FEAT_KEY, ADNIMERGE_FREQ_KEY, EXPRESSION_FREQ_KEY, MRI_FREQ_KEY, TOTAL_FREQ_KEY, DOMAIN_KEY
     ])
 
-    for feat, feat_freqs in significance_frequencies:
+    for feat, feat_freqs in tqdm(significance_frequencies):
         adnimerge_freq: int = feat_freqs[ADNIMERGE_FREQ_KEY]
         expression_freq: int = feat_freqs[EXPRESSION_FREQ_KEY]
         mri_freq: int = feat_freqs[MRI_FREQ_KEY]
