@@ -8,7 +8,7 @@ sbatch -J $JOB_NAME \
     --time=03-00:00:00 \
     --nodes=1 \
     --ntasks=1 \
-    --mem=512G \
+    --mem=1600G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
     jobs/${SCRIPT_NAME}.sh $ALPHA
