@@ -256,14 +256,21 @@ def run_contingency(list1: list, list2: list) -> float:
 def anova(numbers: list, categories) -> float:
     """Computes a correlation using analysis of variance where one column is numeric and the other is nominal"""
 
+    table: list = split_numbers_by_category(numbers=numbers, categories=categories)
+    p: float = f_oneway(*table)[1]
+    return p
+
+
+def split_numbers_by_category(numbers: list, categories: list) -> list:
+    """Splits a numerical variable by corresponding categories"""
+
     unique_categories: list = list(set(categories))
     table: list = []
 
     for c in unique_categories:
         table.append([numbers[i] for i in range(len(numbers)) if categories[i] == c])
 
-    p: float = f_oneway(*table)[1]
-    return p
+    return table
 
 
 def run_corr(list1: list, list2: list) -> float:
