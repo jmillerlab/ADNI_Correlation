@@ -10,12 +10,13 @@ from multiprocessing import Pool, freeze_support
 from math import ceil
 
 from utils import (
-	get_type, NUMERIC_TYPE, get_col_types, START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY, compare, get_comp_key
+	get_type, NUMERIC_TYPE, get_col_types, START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY, compare, get_comp_key,
+	get_significant_alpha, BONFERRONI_ALPHA
 )
 
 """
 Real Data:
-Stop Index: 849523
+Stop Index: 842931
 Base Number Of Rows: 66
 
 Debug Data:
@@ -28,6 +29,7 @@ col_types: dict = {}
 headers: list = []
 PTID_COL: str = 'PTID'
 CSV_DELIMINATOR: str = ','
+FILTER_ALPHA: float = get_significant_alpha(alpha=BONFERRONI_ALPHA)
 
 
 def main():
