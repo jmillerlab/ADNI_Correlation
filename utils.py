@@ -4,7 +4,7 @@ from pickle import load
 from os import listdir, mkdir
 from os.path import join, isdir
 from time import time
-from scipy.stats import chi2_contingency, pearsonr, f_oneway
+from scipy.stats import chi2_contingency, pearsonr, f_oneway, kruskal, spearmanr, normaltest
 from numpy import array
 from pandas import DataFrame
 from tqdm import tqdm
@@ -52,6 +52,9 @@ ADNIMERGE_FREQ_KEY: str = 'ADNIMERGE Frequency'
 EXPRESSION_FREQ_KEY: str = 'Gene Expression Frequency'
 MRI_FREQ_KEY: str = 'MRI Frequency'
 DOMAIN_KEY: str = 'Domain'
+MIN_CHISQ_FREQ: int = 5
+MIN_CAT_SIZE: int = 20
+NORMALITY_ALPHA: float = 0.05
 
 
 def get_inter_counts_tables_dir(table_type: str, subset: str) -> str:
@@ -220,13 +223,13 @@ def compare(header1: str, header2: str, dataset_cols: dict, col_types: dict) -> 
     stat = None
 
     if type1 == NOMINAL_TYPE and type2 == NOMINAL_TYPE:
-        stat: float = run_contingency(list1=list1, list2=list2)
+        stat: float = nom_nom_test(list1=list1, list2=list2)
     elif type1 == NOMINAL_TYPE and type2 == NUMERIC_TYPE:
-        stat: float = anova(numbers=list2, categories=list1)
+        stat: float = num_nom_test(numbers=list2, categories=list1)
     elif type2 == NOMINAL_TYPE and type1 == NUMERIC_TYPE:
-        stat: float = anova(numbers=list1, categories=list2)
+        stat: float = num_nom_test(numbers=list1, categories=list2)
     elif type1 == NUMERIC_TYPE and type2 == NUMERIC_TYPE:
-        stat: float = run_corr(list1=list1, list2=list2)
+        stat: float = num_num_test(list1=list1, list2=list2)
     else:
         print("ERROR: Non-specified type at " + header1 + " x " + header2)
         exit(1)
@@ -234,8 +237,8 @@ def compare(header1: str, header2: str, dataset_cols: dict, col_types: dict) -> 
     return stat
 
 
-def run_contingency(list1: list, list2: list) -> float:
-    """Runs a comparison of two nominal columns"""
+def nom_nom_test(list1: list, list2: list) -> float:
+    """Runs a comparison of two nominal columns using a chi squared test if the table frequencies are high enough"""
 
     idx: list = list(set(list1))
     cols: list = list(set(list2))
@@ -249,15 +252,33 @@ def run_contingency(list1: list, list2: list) -> float:
         contig_table[row_num][col_num] += 1
 
     contig_table: DataFrame = DataFrame(contig_table, index=idx, columns=cols)
+
+    if (contig_table < MIN_CHISQ_FREQ).any().any():
+        return float('inf')
+
     p: float = chi2_contingency(contig_table)[1]
     return p
 
 
-def anova(numbers: list, categories) -> float:
-    """Computes a correlation using analysis of variance where one column is numeric and the other is nominal"""
+def num_nom_test(numbers: list, categories) -> float:
+    """Computes correlation between a numeric and nominal variable using ANOVA or kruskal-wallis"""
 
     table: list = split_numbers_by_category(numbers=numbers, categories=categories)
-    p: float = f_oneway(*table)[1]
+
+    not_normal: bool = False
+
+    for group in table:
+        assert len(group) >= MIN_CAT_SIZE
+
+        if not_normal_distribution(group):
+            not_normal: bool = True
+            break
+
+    if not_normal:
+        p: float = kruskal(*table)[1]
+    else:
+        p: float = f_oneway(*table)[1]
+
     return p
 
 
@@ -273,9 +294,23 @@ def split_numbers_by_category(numbers: list, categories: list) -> list:
     return table
 
 
-def run_corr(list1: list, list2: list) -> float:
+def not_normal_distribution(data: list) -> bool:
+    """Checks if a numeric variable follows a normal distribution"""
+
+    p: float = normaltest(data)[1]
+
+    if p < NORMALITY_ALPHA:
+        return True
+    else:
+        return False
+
+
+def num_num_test(list1: list, list2: list) -> float:
     """Computes a correlation coefficient between two numeric columns"""
 
-    results: tuple = pearsonr(array(list1), array(list2))
-    p: float = results[1]
+    if not_normal_distribution(data=list1) or not_normal_distribution(data=list2):
+        p: float = spearmanr(array(list1), array(list2))[1]
+    else:
+        p: float = pearsonr(array(list1), array(list2))[1]
+
     return p
