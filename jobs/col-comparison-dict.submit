@@ -4,13 +4,13 @@ SCRIPT_NAME="col-comparison-dict"
 DATA_PATH="data/data.csv"
 COL_COMP_INPUTS_PATH="data/col-comp-inputs.csv"
 JOB_N=$1
-N_CORES=3
+N_CORES=4
 OUT_DIR="comp-dicts"
 MEM=128
 JOB_NAME=$SCRIPT_NAME-${JOB_N}-${N_CORES}-${MEM}
 
 sbatch -J $JOB_NAME \
-    --time=00-6:00:00 \
+    --time=00-15:00:00 \
     --nodes=1 \
     --ntasks=$N_CORES \
     --mem=${MEM}G \
