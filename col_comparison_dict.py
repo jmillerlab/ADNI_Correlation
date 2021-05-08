@@ -164,10 +164,12 @@ def col_comparison_dict(n_rows: int, n_threads: int) -> dict:
 
 	p.close()
 	start_time: float = time()
+	n_comps_skipped: int = 0
 
 	# Add all the sub-dictionaries to the main column comparison dictionary
-	for sub_dict in sub_dicts:
+	for sub_dict, n_skipped in sub_dicts:
 		comparison_dict.update(sub_dict)
+		n_comps_skipped += n_skipped
 		del sub_dict
 
 	stdout.write('Time Stitching Batch Threads: ' + str(time() - start_time))
@@ -176,7 +178,7 @@ def col_comparison_dict(n_rows: int, n_threads: int) -> dict:
 	n_cells_left_and_below_diagonal: int = (n_rows ** 2 - n_rows) // 2
 	n_cells_in_diagonal: int = n_rows
 	n_total_cells: int = n_rows * n_cols - n_cells_left_and_below_diagonal - n_cells_in_diagonal
-	assert len(comparison_dict) == n_total_cells
+	assert len(comparison_dict) == n_total_cells - n_comps_skipped
 
 	return comparison_dict
 
@@ -216,6 +218,7 @@ def get_arg_list(n_rows: int, n_cols: int, n_threads: int) -> list:
 def compare_batch(args: tuple) -> dict:
 	"""Runs the correlation algorithm on all the columns in a thread's batch"""
 
+	n_comps_skipped: int = 0
 	result_dict: dict = {}
 	batch_size: int = len(args)
 
@@ -227,9 +230,15 @@ def compare_batch(args: tuple) -> dict:
 			header1: str = headers[row_idx]
 			header2: str = headers[col_idx]
 			key: tuple = get_comp_key(feat1=header1, feat2=header2)
-			result_dict[key] = compare(header1, header2, dataset_cols=dataset_cols, col_types=col_types)
+			p: float = compare(header1, header2, dataset_cols=dataset_cols, col_types=col_types)
 
-	return result_dict
+			if p > FILTER_ALPHA:
+				n_comps_skipped += 1
+				continue
+
+			result_dict[key] = p
+
+	return result_dict, n_comps_skipped
 
 
 if __name__ == '__main__':
