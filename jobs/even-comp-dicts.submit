@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT_NAME="even-filtered-dicts"
+SCRIPT_NAME="even-comp-dicts"
 ALPHA="bonferroni"
 JOB_NAME=${SCRIPT_NAME}-${ALPHA}
 
