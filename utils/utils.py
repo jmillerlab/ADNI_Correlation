@@ -12,12 +12,12 @@ from tqdm import tqdm
 
 NUMERIC_TYPE: str = 'numeric'
 NOMINAL_TYPE: str = 'nominal'
-COL_TYPES_PATH: str = 'data/col-types.csv'
-COL_TYPES_PICKLE_PATH: str = 'data/col-types.p'
+COL_TYPES_PATH: str = '../data/col-types.csv'
+COL_TYPES_PICKLE_PATH: str = '../data/col-types.p'
 START_IDX_KEY: str = 'Start Index'
 STOP_IDX_KEY: str = 'Stop Index'
 N_ROWS_KEY: str = 'Number of Rows'
-ALPHAS_PATH: str = 'data/alphas.p'
+ALPHAS_PATH: str = '../data/alphas.p'
 INTER_COUNTS_TABLE_DIR: str = 'data/inter-counts-tables/{}'
 COUNTS_TABLE_PATH: str = 'data/counts-tables/{}.csv'
 ALPHA_FILTERED_DIR: str = 'data/alpha-filtered-{}'
@@ -133,7 +133,7 @@ def iterate_filtered_dicts(alpha: str, func: callable, use_p: bool = False, **kw
 def iterate_comp_dicts(comp_dict_dir: str, idx: int, section_size: int, func: callable, **kwargs) -> tuple:
     """Iterates through the comparison dictionaries in a given section and performs a given function on them"""
 
-    comp_dict_dir: str = join('data', comp_dict_dir)
+    comp_dict_dir: str = join('../data', comp_dict_dir)
     comp_dicts: list = listdir(comp_dict_dir)
 
     # Remove the files that aren't comparison dictionaries

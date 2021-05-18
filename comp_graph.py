@@ -6,7 +6,7 @@ from matplotlib.pyplot import subplots, savefig, setp
 from os import mkdir
 from os.path import isdir, join
 
-from utils import (
+from utils.utils import (
     get_col_types, NUM_NUM_KEY, NUM_NOM_KEY, NOM_NOM_KEY, get_comparison_type, get_type, NOMINAL_TYPE,
     split_numbers_by_category
 )

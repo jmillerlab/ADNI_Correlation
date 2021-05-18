@@ -5,7 +5,7 @@ from os import mkdir
 from os.path import isdir, join
 from pickle import dump
 
-from utils import iterate_comp_dicts, ALPHA_FILTERED_DIR, get_significant_alpha
+from utils.utils import iterate_comp_dicts, ALPHA_FILTERED_DIR, get_significant_alpha
 
 
 def main():

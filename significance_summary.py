@@ -7,7 +7,7 @@ from os import mkdir
 from os.path import join, isdir
 from numpy import mean, std, min, max
 
-from utils import (
+from utils.utils import (
     SIGNIFICANT_FREQUENCIES_CSV_PATH, ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY, ADNIMERGE_FREQ_KEY, EXPRESSION_FREQ_KEY,
     MRI_FREQ_KEY, TOTAL_FREQ_KEY, DOMAIN_KEY, IDX_COL
 )

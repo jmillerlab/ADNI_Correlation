@@ -4,7 +4,7 @@ from pandas import DataFrame, unique
 from sys import argv
 from tqdm import tqdm
 
-from utils import (
+from utils.utils import (
     iterate_filtered_dicts, SIGNIFICANT_FREQUENCIES_CSV_PATH, get_domain, get_col_types, ADNIMERGE_FREQ_KEY,
     EXPRESSION_FREQ_KEY, MRI_FREQ_KEY, TOTAL_FREQ_KEY, DOMAIN_KEY, ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY
 )

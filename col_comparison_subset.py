@@ -8,7 +8,7 @@ from pandas import read_csv, DataFrame
 from tqdm import tqdm
 from time import time
 
-from utils import (
+from utils.utils import (
     get_significant_alpha, BONFERRONI_ALPHA, ALPHA_FILTERED_DIR, compare, get_col_types, SUBSET_PATH, get_comp_key,
     SUBSET_COMP_DICTS_PATH
 )

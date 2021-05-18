@@ -3,7 +3,7 @@
 from sys import argv
 from pickle import load
 
-from utils import SUBSET_PATH
+from utils.utils import SUBSET_PATH
 
 
 def main():

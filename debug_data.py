@@ -5,7 +5,7 @@ from pandas import DataFrame, read_csv
 from pickle import load
 from random import seed, shuffle
 
-from utils import COL_TYPES_PICKLE_PATH
+from utils.utils import COL_TYPES_PICKLE_PATH
 
 
 def debug_data():

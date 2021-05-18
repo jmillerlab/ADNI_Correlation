@@ -5,7 +5,7 @@ from os.path import join
 from pandas import read_csv, DataFrame
 from sys import argv
 
-from utils import IDX_COL, COUNTS_TABLE_PATH, get_inter_counts_tables_dir
+from utils.utils import IDX_COL, COUNTS_TABLE_PATH, get_inter_counts_tables_dir
 
 
 def main():

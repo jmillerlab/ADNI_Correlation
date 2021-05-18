@@ -4,7 +4,7 @@ from sys import argv
 from math import sqrt
 from pandas import DataFrame
 
-from utils import START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY
+from utils.utils import START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY
 
 
 def main():

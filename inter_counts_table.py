@@ -5,7 +5,7 @@ from os.path import join
 from pickle import load
 from pandas import DataFrame
 
-from utils import (
+from utils.utils import (
     ALPHAS_PATH, INSIGNIFICANT_KEY, UNCORRECTED_ALPHA_KEY, CORRECTED_ALPHA_KEY, SUPER_ALPHA_KEY, MAX_SIGNIFICANCE_KEY,
     get_col_types, IDX_COL, iterate_comp_dicts, get_comparison_type, NUM_NUM_KEY, NOM_NOM_KEY, NUM_NOM_KEY, MRI_MRI_KEY,
     EXPRESSION_EXPRESSION_KEY, ADNIMERGE_ADNIMERGE_KEY, MRI_EXPRESSION_KEY, MRI_ADNIMERGE_KEY, EXPRESSION_ADNIMERGE_KEY,

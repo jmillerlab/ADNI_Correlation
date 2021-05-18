@@ -4,7 +4,7 @@ from sys import argv
 from pandas import DataFrame, read_csv
 from pickle import dump
 
-from utils import ALPHAS_PATH, COL_TYPES_PATH
+from utils.utils import ALPHAS_PATH, COL_TYPES_PATH
 
 
 def main():

@@ -2,7 +2,7 @@
 
 from pandas import DataFrame
 
-from utils import NUM_NUM_KEY, get_comp_key, iterate_filtered_dicts, get_comparison_type, get_col_types, MAXIMUM_ALPHA
+from utils.utils import NUM_NUM_KEY, get_comp_key, iterate_filtered_dicts, get_comparison_type, get_col_types, MAXIMUM_ALPHA
 
 FEAT1_KEY: str = 'Feature 1'
 FEAT2_KEY: str = 'Feature 2'

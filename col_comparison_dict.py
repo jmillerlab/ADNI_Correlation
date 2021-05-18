@@ -9,7 +9,7 @@ from sys import argv, stdout
 from multiprocessing import Pool, freeze_support
 from math import ceil
 
-from utils import (
+from utils.utils import (
 	get_type, NUMERIC_TYPE, get_col_types, START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY, compare, get_comp_key,
 	get_significant_alpha, BONFERRONI_ALPHA
 )
