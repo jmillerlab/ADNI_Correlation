@@ -7,7 +7,8 @@ from shutil import rmtree
 from pickle import dump
 from math import ceil
 
-from utils.utils import iterate_filtered_dicts, get_comp_key, BONFERRONI_ALPHA, MAXIMUM_ALPHA
+from utils.utils import get_comp_key, BONFERRONI_ALPHA, MAXIMUM_ALPHA
+from utils.iterate_comp_dicts import iterate_filtered_dicts
 
 N_OUTPUT_DICTS: int = 4000
 LOADED_KEY: str = 'total-len-loaded'

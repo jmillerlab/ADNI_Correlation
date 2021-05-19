@@ -5,7 +5,8 @@ from os import mkdir
 from os.path import isdir, join
 from pickle import dump
 
-from utils.utils import iterate_comp_dicts, ALPHA_FILTERED_DIR, get_significant_alpha
+from utils.utils import ALPHA_FILTERED_DIR, get_significant_alpha
+from utils.iterate_comp_dicts import iterate_by_idx
 
 
 def main():
@@ -24,7 +25,7 @@ def main():
 
     filtered_comparisons: dict = {}
 
-    start_idx, stop_idx = iterate_comp_dicts(
+    start_idx, stop_idx = iterate_by_idx(
         comp_dict_dir=comp_dict_dir, idx=idx, section_size=section_size, func=filter_by_alpha, alpha=alpha,
         filtered_comparisons=filtered_comparisons
     )

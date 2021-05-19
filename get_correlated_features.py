@@ -1,6 +1,6 @@
 """Gets all the features that are correlated with a given feature for a given alpha"""
 
-from utils.utils import iterate_filtered_dicts
+from utils.iterate_comp_dicts import iterate_filtered_dicts
 
 from sys import argv
 from pickle import dump, load

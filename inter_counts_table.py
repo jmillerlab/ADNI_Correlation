@@ -7,11 +7,12 @@ from pandas import DataFrame
 
 from utils.utils import (
     ALPHAS_PATH, INSIGNIFICANT_KEY, UNCORRECTED_ALPHA_KEY, CORRECTED_ALPHA_KEY, SUPER_ALPHA_KEY, MAX_SIGNIFICANCE_KEY,
-    get_col_types, IDX_COL, iterate_comp_dicts, get_comparison_type, NUM_NUM_KEY, NOM_NOM_KEY, NUM_NOM_KEY, MRI_MRI_KEY,
+    get_col_types, IDX_COL, get_comparison_type, NUM_NUM_KEY, NOM_NOM_KEY, NUM_NOM_KEY, MRI_MRI_KEY,
     EXPRESSION_EXPRESSION_KEY, ADNIMERGE_ADNIMERGE_KEY, MRI_EXPRESSION_KEY, MRI_ADNIMERGE_KEY, EXPRESSION_ADNIMERGE_KEY,
     DATA_TYPE_TABLE_TYPE, DOMAIN_TABLE_TYPE, MIN_ALPHA, get_inter_counts_tables_dir, get_domain, ADNIMERGE_KEY,
     EXPRESSION_KEY, MRI_KEY
 )
+from utils.iterate_comp_dicts import iterate_by_idx
 
 TOTAL_KEY: str = 'Total'
 
@@ -33,7 +34,7 @@ def main():
     uncorrected_alpha, corrected_alpha = load(open(ALPHAS_PATH, 'rb'))
     col_types: dict = get_col_types()
 
-    start_idx, stop_idx = iterate_comp_dicts(
+    start_idx, stop_idx = iterate_by_idx(
         comp_dict_dir=comp_dict_dir, idx=idx, section_size=section_size, func=count_comparisons, col_types=col_types,
         table=table, super_alpha=super_alpha, corrected_alpha=corrected_alpha, uncorrected_alpha=uncorrected_alpha,
         table_type=table_type
