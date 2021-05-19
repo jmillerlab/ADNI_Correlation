@@ -1,7 +1,8 @@
+"""Contains functionality for iterating through comparison dictionaries"""
+
 from os import listdir
 from os.path import join
 from pickle import load
-from time import time
 from tqdm import tqdm
 
 from utils.utils import get_significant_alpha, ALPHA_FILTERED_DIR
@@ -30,39 +31,19 @@ def iterate_by_idx(comp_dict_dir: str, idx: int, section_size: int, func: callab
     del new_comp_dicts
 
     n_dicts: int = len(comp_dicts)
-    print('Total Number Of Comparison Dictionaries:', n_dicts)
     start_idx: int = idx * section_size
 
-    if start_idx >= n_dicts:
-        print(
-            'ERROR: Start index of {} is greater than or equal to the number of comparison dictionaries {}'.format(
-                start_idx, n_dicts
-            )
-        )
-        exit(1)
+    assert start_idx >= n_dicts
 
-    print('Start Index:', start_idx)
     stop_idx: int = min(start_idx + section_size, n_dicts)
-    print('Stop Index:', stop_idx)
     comp_dicts: list = comp_dicts[start_idx:stop_idx]
 
     for comp_dict in comp_dicts:
         comp_dict: str = join(comp_dict_dir, comp_dict)
-        print('Loading Comparison Dictionary At:', comp_dict)
-        time1: float = time()
         comp_dict: dict = load(open(comp_dict, 'rb'))
-        time2: float = time()
-        print('Load Time: {:.2f} minutes'.format((time2 - time1) / 60))
-
-        n_comparisons: int = len(comp_dict)
-        print('Total Number Of Comparisons:', n_comparisons)
-        time1: float = time()
 
         for (feat1, feat2), p in comp_dict.items():
             func(feat1=feat1, feat2=feat2, p=p, **kwargs)
-
-        time2: float = time()
-        print('Time Iterating Through Comparisons: {:.2f} minutes'.format((time2 - time1) / 60))
 
     return start_idx, stop_idx
 
