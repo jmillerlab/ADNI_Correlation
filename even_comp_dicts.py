@@ -1,16 +1,14 @@
-"""temp"""
+"""Takes comparison dictionaries from a given directory and makes them more equal in size"""
 
 from sys import argv
-from os import mkdir, listdir, rename
-from os.path import isdir
+from os import mkdir, rename
+from os.path import isdir, join, isfile
 from shutil import rmtree
 from pickle import dump
-from math import ceil
 
-from utils.utils import get_comp_key, BONFERRONI_ALPHA, MAXIMUM_ALPHA
-from utils.iterate_comp_dicts import iterate_filtered_dicts
+from utils.utils import get_comp_key
+from utils.iterate_comp_dicts import BasicDictIter
 
-N_OUTPUT_DICTS: int = 4000
 LOADED_KEY: str = 'total-len-loaded'
 SAVED_KEY: str = 'total-len-saved'
 NEXT_DICT_KEY: str = 'next-dict'
@@ -22,11 +20,8 @@ TMP_DIR: str = '.tmp/'
 def main():
     """Main method"""
 
-    alpha: str = argv[1]
-
-    assert alpha == BONFERRONI_ALPHA or alpha == MAXIMUM_ALPHA
-
-    total_len: int = 52416186173 if alpha == BONFERRONI_ALPHA else 89523104
+    comp_dict_dir: str = argv[1]
+    n_comps_per_file: str = int(argv[2])
 
     local_vars: dict = {
         LOADED_KEY: 0,
@@ -39,12 +34,12 @@ def main():
         rmtree(TMP_DIR)
 
     mkdir(TMP_DIR)
-    n_comps_per_file: int = ceil(total_len / N_OUTPUT_DICTS)
 
-    alpha_filtered_dir: str = iterate_filtered_dicts(
-        alpha=alpha, func=add_save, use_p=True, n_comps_per_file=n_comps_per_file, local_vars=local_vars
+    comp_dict_iter: BasicDictIter = BasicDictIter(
+        comp_dict_dir=comp_dict_dir, use_p=True, func=add_save, n_comps_per_file=n_comps_per_file, local_vars=local_vars
     )
 
+    comp_dict_iter()
     next_dict: dict = local_vars[NEXT_DICT_KEY]
 
     assert len(next_dict) <= n_comps_per_file
@@ -53,12 +48,10 @@ def main():
     save(next_dict=next_dict, local_vars=local_vars)
 
     assert local_vars[LOADED_KEY] == local_vars[SAVED_KEY]
-    assert local_vars[LOADED_KEY] == total_len
-    assert len(listdir(TMP_DIR)) == N_OUTPUT_DICTS
-    assert local_vars[IDX_KEY] == N_OUTPUT_DICTS
 
-    rmtree(alpha_filtered_dir)
-    rename(src=TMP_DIR, dst=alpha_filtered_dir)
+    copy_gitignore(tmp_dir=TMP_DIR, comp_dict_dir=comp_dict_dir)
+    rmtree(comp_dict_dir)
+    rename(src=TMP_DIR, dst=comp_dict_dir)
 
 
 def add_save(feat1: str, feat2: str, p: float, n_comps_per_file: int, local_vars: dict):
@@ -82,6 +75,15 @@ def save(next_dict: dict, local_vars: dict):
     dump(next_dict, open(path, 'wb'))
     local_vars[SAVED_KEY] += len(next_dict)
     local_vars[NEXT_DICT_KEY] = {}
+
+
+def copy_gitignore(tmp_dir: str, comp_dict_dir: str):
+    """Copies the .gitignore file from the temporary directory to the resulting directory"""
+
+    gitignore_path: str = join(comp_dict_dir, '.gitignore')
+
+    if isfile(gitignore_path):
+        rename(gitignore_path, join(tmp_dir, '.gitignore'))
 
 
 if __name__ == '__main__':

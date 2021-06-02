@@ -8,10 +8,7 @@ from pandas import read_csv, DataFrame
 from tqdm import tqdm
 from time import time
 
-from utils.utils import (
-    get_significant_alpha, BONFERRONI_ALPHA, ALPHA_FILTERED_DIR, compare, get_col_types, SUBSET_PATH, get_comp_key,
-    SUBSET_COMP_DICTS_PATH
-)
+from utils.utils import compare, get_col_types, SUBSET_PATH, get_comp_key, SUBSET_COMP_DICTS_PATH
 
 
 def main():
@@ -19,22 +16,20 @@ def main():
 
     idx: int = int(argv[1])
     subset: str = argv[2]
+    comp_dir: str = argv[3]
 
     comp_dicts_path: str = SUBSET_COMP_DICTS_PATH.format(subset)
 
     if not isdir(comp_dicts_path):
         mkdir(comp_dicts_path)
 
-    alpha: float = get_significant_alpha(alpha=BONFERRONI_ALPHA)
-    alpha_filtered_dir: str = ALPHA_FILTERED_DIR.format(alpha)
-
     col_types: dict = get_col_types()
-    new_comps: list = sorted(listdir(alpha_filtered_dir))
+    new_comps: list = sorted(listdir(comp_dir))
     new_comps: str = new_comps[idx]
 
     assert new_comps.endswith('.p')
 
-    new_comps: str = join(alpha_filtered_dir, new_comps)
+    new_comps: str = join(comp_dir, new_comps)
     print('Loading Filtered Comparisons at:', new_comps)
     new_comps: dict = load(open(new_comps, 'rb'))
     original_len: int = len(new_comps)
@@ -47,8 +42,6 @@ def main():
     t1: float = time()
 
     for (feat1, feat2), p in tqdm(list(new_comps.items())):
-        assert p < alpha
-
         key: tuple = get_comp_key(feat1=feat1, feat2=feat2)
 
         if len(set(dataset_cols[feat1])) == 1 or len(set(dataset_cols[feat2])) == 1:

@@ -8,10 +8,11 @@ from time import time
 from sys import argv, stdout
 from multiprocessing import Pool, freeze_support
 from math import ceil
+from pickle import load
 
 from utils.utils import (
 	get_type, NUMERIC_TYPE, get_col_types, START_IDX_KEY, STOP_IDX_KEY, N_ROWS_KEY, compare, get_comp_key,
-	get_significant_alpha, BONFERRONI_ALPHA
+	ALPHAS_PATH
 )
 
 """
@@ -29,7 +30,9 @@ col_types: dict = {}
 headers: list = []
 PTID_COL: str = 'PTID'
 CSV_DELIMINATOR: str = ','
-FILTER_ALPHA: float = get_significant_alpha(alpha=BONFERRONI_ALPHA)
+FILTER_ALPHA = load(open(ALPHAS_PATH, 'rb'))[1]
+
+assert type(FILTER_ALPHA) is float
 
 
 def main():
@@ -236,6 +239,7 @@ def compare_batch(args: tuple) -> dict:
 				n_comps_skipped += 1
 				continue
 
+			assert key not in result_dict
 			result_dict[key] = p
 
 	return result_dict, n_comps_skipped

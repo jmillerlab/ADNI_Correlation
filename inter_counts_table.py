@@ -12,7 +12,8 @@ from utils.utils import (
     DATA_TYPE_TABLE_TYPE, DOMAIN_TABLE_TYPE, MIN_ALPHA, get_inter_counts_tables_dir, get_domain, ADNIMERGE_KEY,
     EXPRESSION_KEY, MRI_KEY
 )
-from utils.iterate_comp_dicts import iterate_by_idx
+
+from utils.iterate_comp_dicts import IterByIdx
 
 TOTAL_KEY: str = 'Total'
 
@@ -34,12 +35,15 @@ def main():
     uncorrected_alpha, corrected_alpha = load(open(ALPHAS_PATH, 'rb'))
     col_types: dict = get_col_types()
 
-    start_idx, stop_idx = iterate_by_idx(
-        comp_dict_dir=comp_dict_dir, idx=idx, section_size=section_size, func=count_comparisons, col_types=col_types,
+    comp_dict_iter: IterByIdx = IterByIdx(
+        comp_dict_dir=comp_dict_dir, func=count_comparisons, idx=idx, section_size=section_size, col_types=col_types,
         table=table, super_alpha=super_alpha, corrected_alpha=corrected_alpha, uncorrected_alpha=uncorrected_alpha,
         table_type=table_type
     )
 
+    start_idx: int = comp_dict_iter.start_idx
+    stop_idx: int = comp_dict_iter.stop_idx
+    comp_dict_iter()
     print(table)
     inter_counts_tables_dir: str = get_inter_counts_tables_dir(table_type=table_type, subset=subset)
     counts_table_path: str = join(inter_counts_tables_dir, '{}-{}.csv'.format(start_idx, stop_idx))

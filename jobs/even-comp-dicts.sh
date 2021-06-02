@@ -2,6 +2,7 @@
 
 source ../env/bin/activate
 
-ALPHA=$1
+COMP_DICT_DIR=$1
+N_COMPS_PER_FILE=$2
 
-python3 even_comp_dicts.py ${ALPHA}
+python3 even_comp_dicts.py ${COMP_DICT_DIR} ${N_COMPS_PER_FILE}

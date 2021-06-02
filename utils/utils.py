@@ -17,7 +17,6 @@ N_ROWS_KEY: str = 'Number of Rows'
 ALPHAS_PATH: str = 'data/alphas.p'
 INTER_COUNTS_TABLE_DIR: str = 'data/inter-counts-tables/{}'
 COUNTS_TABLE_PATH: str = 'data/counts-tables/{}.csv'
-ALPHA_FILTERED_DIR: str = 'data/alpha-filtered-{}'
 INSIGNIFICANT_KEY: str = 'No Significance'
 UNCORRECTED_ALPHA_KEY: str = 'Below Uncorrected Alpha'
 CORRECTED_ALPHA_KEY: str = 'Below Bonferroni Corrected Alpha'
@@ -36,8 +35,6 @@ EXPRESSION_ADNIMERGE_KEY: str = 'Expression ADNIMERGE'
 DATA_TYPE_TABLE_TYPE: str = 'data-type'
 DOMAIN_TABLE_TYPE: str = 'domain'
 MIN_ALPHA: float = 5e-324
-BONFERRONI_ALPHA: str = 'bonferroni'
-MAXIMUM_ALPHA: str = 'maximum'
 SUBSET_PATH: str = 'data/{}-data.csv'
 SUBSET_COMP_DICTS_PATH: str = 'data/{}-comp-dicts'
 SIGNIFICANT_FREQUENCIES_CSV_PATH: str = 'data/significance-frequencies-{}.csv'
@@ -68,19 +65,6 @@ def get_inter_counts_tables_dir(table_type: str, subset: str) -> str:
         mkdir(inter_counts_tables_dir)
 
     return inter_counts_tables_dir
-
-
-def get_significant_alpha(alpha: str) -> float:
-    """Gets the alpha for either bonferroni or maximum significance"""
-
-    assert alpha == BONFERRONI_ALPHA or alpha == MAXIMUM_ALPHA
-
-    if alpha == BONFERRONI_ALPHA:
-        _, alpha = load(open(ALPHAS_PATH, 'rb'))
-    elif alpha == MAXIMUM_ALPHA:
-        alpha: float = MIN_ALPHA
-
-    return alpha
 
 
 def get_type(header: str, col_types: dict) -> str:

@@ -5,66 +5,73 @@ from os.path import join
 from pickle import load
 from tqdm import tqdm
 
-from utils.utils import get_significant_alpha, ALPHA_FILTERED_DIR
+
+class CompDictIter:
+    """A base class for iterating through comparison dictionaries"""
+
+    def __init__(self, comp_dict_dir: str, func: callable, **kwargs: dict):
+        self.comp_dict_dir: str = comp_dict_dir
+        self.func: callable = func
+        self.kwargs: dict = kwargs
+        self._remove_non_comp_files()
+
+    def _remove_non_comp_files(self):
+        """Removes files from the list of comparisons dictionaries that are not comparison dictionaries"""
+
+        comp_dicts: list = listdir(self.comp_dict_dir)
+        new_comp_dicts: list = []
+
+        for comp_dict in comp_dicts:
+            if comp_dict.endswith('.p'):
+                new_comp_dicts.append(comp_dict)
+
+        comp_dicts: list = sorted(new_comp_dicts)
+        self.comp_dicts: list = comp_dicts
+
+    def _do_iter(self, feat1: str, feat2: str, p: float):
+        """The functionality to perform on a given comparison in an iteration"""
+
+        raise NotImplementedError
+
+    def __call__(self):
+        for comp_dict in tqdm(self.comp_dicts):
+            comp_dict: str = join(self.comp_dict_dir, comp_dict)
+            comp_dict: dict = load(open(comp_dict, 'rb'))
+
+            for (feat1, feat2), p in comp_dict.items():
+                self._do_iter(feat1=feat1, feat2=feat2, p=p)
 
 
-def iterate_comp_dicts(outer_func: callable, inner_func: callable, outer_kwargs: dict, inner_kwargs: dict):
-    """Iterates through comparison dictionaries in a specified fashion"""
-
-    outer_func(**outer_kwargs, )
-
-
-def iterate_by_idx(comp_dict_dir: str, idx: int, section_size: int, func: callable, **kwargs) -> tuple:
+class IterByIdx(CompDictIter):
     """Iterates through the comparison dictionaries in a given section and performs a given function on them"""
 
-    comp_dict_dir: str = join('../data', comp_dict_dir)
-    comp_dicts: list = listdir(comp_dict_dir)
+    def __init__(self, comp_dict_dir: str, func: callable, idx: int, section_size: int, **kwargs: dict):
+        super().__init__(comp_dict_dir=comp_dict_dir, func=func, **kwargs)
+        n_dicts: int = len(self.comp_dicts)
+        self.start_idx: int = idx * section_size
 
-    # Remove the files that aren't comparison dictionaries
-    new_comp_dicts: list = []
+        assert self.start_idx < n_dicts
 
-    for comp_dict in comp_dicts:
-        if comp_dict.endswith('.p'):
-            new_comp_dicts.append(comp_dict)
+        self.stop_idx: int = min(self.start_idx + section_size, n_dicts)
+        self.comp_dicts: list = self.comp_dicts[self.start_idx:self.stop_idx]
 
-    comp_dicts: list = sorted(new_comp_dicts)
-    del new_comp_dicts
+    def _do_iter(self, feat1: str, feat2: str, p: float):
+        """Implements abstract method"""
 
-    n_dicts: int = len(comp_dicts)
-    start_idx: int = idx * section_size
-
-    assert start_idx >= n_dicts
-
-    stop_idx: int = min(start_idx + section_size, n_dicts)
-    comp_dicts: list = comp_dicts[start_idx:stop_idx]
-
-    for comp_dict in comp_dicts:
-        comp_dict: str = join(comp_dict_dir, comp_dict)
-        comp_dict: dict = load(open(comp_dict, 'rb'))
-
-        for (feat1, feat2), p in comp_dict.items():
-            func(feat1=feat1, feat2=feat2, p=p, **kwargs)
-
-    return start_idx, stop_idx
+        self.func(feat1=feat1, feat2=feat2, p=p, **self.kwargs)
 
 
-def iterate_filtered_dicts(alpha: str, func: callable, use_p: bool = False, **kwargs) -> str:
-    """Iterates through the comparisons that were filtered for a given alpha"""
+class BasicDictIter(CompDictIter):
+    """Iterates through all the comparisons in a directory and performs a function on them"""
 
-    alpha: float = get_significant_alpha(alpha=alpha)
-    alpha_filtered_dir: str = ALPHA_FILTERED_DIR.format(alpha)
-    filtered_dicts: list = (listdir(alpha_filtered_dir))
+    def __init__(self, comp_dict_dir: str, use_p: bool, func: callable, **kwargs: dict):
+        super().__init__(comp_dict_dir=comp_dict_dir, func=func, **kwargs)
+        self.use_p: bool = use_p
 
-    for filtered_dict in tqdm(filtered_dicts):
-        filtered_dict: str = join(alpha_filtered_dir, filtered_dict)
-        filtered_dict: dict = load(open(filtered_dict, 'rb'))
+    def _do_iter(self, feat1: str, feat2: str, p: float):
+        """Implements abstract method"""
 
-        for (feat1, feat2), p in filtered_dict.items():
-            assert p < alpha
-
-            if use_p:
-                func(feat1=feat1, feat2=feat2, p=p, **kwargs)
-            else:
-                func(feat1=feat1, feat2=feat2, **kwargs)
-
-    return alpha_filtered_dir
+        if self.use_p:
+            self.func(feat1=feat1, feat2=feat2, p=p, **self.kwargs)
+        else:
+            self.func(feat1=feat1, feat2=feat2, **self.kwargs)

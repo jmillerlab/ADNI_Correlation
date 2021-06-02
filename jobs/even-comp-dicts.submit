@@ -1,8 +1,9 @@
 #!/bin/sh
 
 SCRIPT_NAME="even-comp-dicts"
-ALPHA="bonferroni"
-JOB_NAME=${SCRIPT_NAME}-${ALPHA}
+COMP_DICT_DIR="data/comp-dicts"
+N_COMPS_PER_FILE=13200000
+JOB_NAME=${SCRIPT_NAME}-${COMP_DICT_DIR}
 
 sbatch -J $JOB_NAME \
     --time=07-00:00:00 \
@@ -11,4 +12,4 @@ sbatch -J $JOB_NAME \
     --mem=128G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
-    jobs/${SCRIPT_NAME}.sh $ALPHA
+    jobs/${SCRIPT_NAME}.sh $COMP_DICT_DIR $N_COMPS_PER_FILE
