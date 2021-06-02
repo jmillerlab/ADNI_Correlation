@@ -6,11 +6,10 @@ from pickle import load
 from pandas import DataFrame
 
 from utils.utils import (
-    ALPHAS_PATH, INSIGNIFICANT_KEY, UNCORRECTED_ALPHA_KEY, CORRECTED_ALPHA_KEY, SUPER_ALPHA_KEY, MAX_SIGNIFICANCE_KEY,
-    get_col_types, IDX_COL, get_comparison_type, NUM_NUM_KEY, NOM_NOM_KEY, NUM_NOM_KEY, MRI_MRI_KEY,
-    EXPRESSION_EXPRESSION_KEY, ADNIMERGE_ADNIMERGE_KEY, MRI_EXPRESSION_KEY, MRI_ADNIMERGE_KEY, EXPRESSION_ADNIMERGE_KEY,
-    DATA_TYPE_TABLE_TYPE, DOMAIN_TABLE_TYPE, MIN_ALPHA, get_inter_counts_tables_dir, get_domain, ADNIMERGE_KEY,
-    EXPRESSION_KEY, MRI_KEY
+    ALPHAS_PATH, CORRECTED_ALPHA_KEY, SUPER_ALPHA_KEY, MAX_SIGNIFICANCE_KEY, get_col_types, IDX_COL,
+    get_comparison_type, NUM_NUM_KEY, NOM_NOM_KEY, NUM_NOM_KEY, MRI_MRI_KEY, EXPRESSION_EXPRESSION_KEY,
+    ADNIMERGE_ADNIMERGE_KEY, MRI_EXPRESSION_KEY, MRI_ADNIMERGE_KEY, EXPRESSION_ADNIMERGE_KEY, DATA_TYPE_TABLE_TYPE,
+    DOMAIN_TABLE_TYPE, MIN_ALPHA, get_inter_counts_tables_dir, get_domain, ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY
 )
 
 from utils.iterate_comp_dicts import IterByIdx
@@ -32,13 +31,12 @@ def main():
 
     assert table is not None
 
-    uncorrected_alpha, corrected_alpha = load(open(ALPHAS_PATH, 'rb'))
+    _, corrected_alpha = load(open(ALPHAS_PATH, 'rb'))
     col_types: dict = get_col_types()
 
     comp_dict_iter: IterByIdx = IterByIdx(
         comp_dict_dir=comp_dict_dir, func=count_comparisons, idx=idx, section_size=section_size, col_types=col_types,
-        table=table, super_alpha=super_alpha, corrected_alpha=corrected_alpha, uncorrected_alpha=uncorrected_alpha,
-        table_type=table_type
+        table=table, super_alpha=super_alpha, corrected_alpha=corrected_alpha, table_type=table_type
     )
 
     start_idx: int = comp_dict_iter.start_idx
@@ -66,24 +64,24 @@ def make_table(table_type: str) -> DataFrame:
 
     idx_col += [TOTAL_KEY]
     empty_col: list = [0] * len(idx_col)
+
     table: DataFrame = DataFrame(
         {
             IDX_COL: idx_col,
-            INSIGNIFICANT_KEY: empty_col,
-            UNCORRECTED_ALPHA_KEY: empty_col,
             CORRECTED_ALPHA_KEY: empty_col,
             SUPER_ALPHA_KEY: empty_col,
             MAX_SIGNIFICANCE_KEY: empty_col,
             TOTAL_KEY: empty_col
         }
     )
+
     table: DataFrame = table.set_index(IDX_COL)
     return table
 
 
 def count_comparisons(
     feat1: str, feat2: str, p: float, col_types: dict, table: DataFrame, super_alpha: float, corrected_alpha: float,
-    uncorrected_alpha: float, table_type: str
+    table_type: str
 ):
     """Determines the type of comparison and the alpha it is lower than and updates the counts table accordingly"""
 
@@ -96,12 +94,10 @@ def count_comparisons(
         col_key: str = MAX_SIGNIFICANCE_KEY
     elif p < super_alpha:
         col_key: str = SUPER_ALPHA_KEY
-    elif p < corrected_alpha:
-        col_key: str = CORRECTED_ALPHA_KEY
-    elif p < uncorrected_alpha:
-        col_key: str = UNCORRECTED_ALPHA_KEY
     else:
-        col_key: str = INSIGNIFICANT_KEY
+        assert p <= corrected_alpha
+
+        col_key: str = CORRECTED_ALPHA_KEY
 
     table[col_key][row_key] += 1
     table[TOTAL_KEY][row_key] += 1
