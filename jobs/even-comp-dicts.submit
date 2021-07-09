@@ -3,7 +3,7 @@
 SCRIPT_NAME="even-comp-dicts"
 COMP_DICT_DIR="data/comp-dicts"
 N_COMPS_PER_FILE=13200000
-JOB_NAME=${SCRIPT_NAME}-${COMP_DICT_DIR}
+JOB_NAME=${SCRIPT_NAME}
 
 sbatch -J $JOB_NAME \
     --time=07-00:00:00 \
