@@ -3,8 +3,9 @@
 from pandas import DataFrame, unique
 from sys import argv
 from tqdm import tqdm
+from pickle import dump
 
-from utils.iterate_comp_dicts import iterate_filtered_dicts
+from utils.iterate_comp_dicts import BasicDictIter
 
 from utils.utils import (
     SIGNIFICANT_FREQUENCIES_CSV_PATH, get_domain, get_col_types, ADNIMERGE_FREQ_KEY,
@@ -23,15 +24,21 @@ DOMAIN_TO_DOMAIN_FREQ_KEY: dict = {
 def main():
     """Main method"""
 
-    alpha: str = argv[1]
+    comp_dict_dir: str = argv[1]
+    file_path: str = argv[2]
 
     significance_frequencies: dict = {}
     col_types: dict = get_col_types()
 
-    iterate_filtered_dicts(
-        alpha=alpha, func=add_frequencies, significance_frequencies=significance_frequencies, col_types=col_types
+    comp_dict_iter: BasicDictIter = BasicDictIter(
+        comp_dict_dir=comp_dict_dir, use_p=False, func=add_frequencies,
+        significance_frequencies=significance_frequencies, col_types=col_types
     )
 
+    comp_dict_iter()
+    dump(significance_frequencies, open(file_path, 'wb'))
+
+    '''
     sort_func: callable = lambda key: significance_frequencies[key][TOTAL_FREQ_KEY]
 
     significance_frequencies: list = [(key, significance_frequencies[key]) for key in sorted(
@@ -62,9 +69,8 @@ def main():
 
     assert len(unique(table[FEAT_KEY])) == len(table)
 
-    table_path: str = SIGNIFICANT_FREQUENCIES_CSV_PATH.format(alpha)
     table.to_csv(table_path, index=False)
-    save_adnimerge_frequencies(significance_frequencies=table, alpha=alpha)
+    '''
 
 
 def add_frequencies(feat1: str, feat2: str, significance_frequencies: dict, col_types: dict):
@@ -93,19 +99,6 @@ def add_frequency(feat: str, other: str, significance_frequencies: dict, col_typ
 
         freqs[other_domain_freq_key] = 1
         significance_frequencies[feat] = freqs
-
-
-def save_adnimerge_frequencies(significance_frequencies: DataFrame, alpha: str):
-    """Saves the ADNIMERGE portion of the significance frequencies"""
-
-    adnimerge_frequencies: DataFrame = significance_frequencies.loc[
-        significance_frequencies[DOMAIN_KEY] == ADNIMERGE_KEY
-        ]
-
-    del adnimerge_frequencies[DOMAIN_KEY]
-
-    save_path: str = 'data/adnimerge-frequencies-{}.csv'.format(alpha)
-    adnimerge_frequencies.to_csv(save_path, index=False)
 
 
 if __name__ == '__main__':
