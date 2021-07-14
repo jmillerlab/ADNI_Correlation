@@ -1,8 +1,9 @@
 #!/bin/sh
 
-SCRIPT_NAME="significance-frequencies"
-ALPHA="bonferroni"
-JOB_NAME=${SCRIPT_NAME}-${ALPHA}
+SCRIPT_NAME="sig-freqs"
+COMP_DICT_DIR="data/comp-dicts"
+FILE_PATH="data/bonferroni-sig-freqs.p"
+JOB_NAME=${SCRIPT_NAME}
 
 sbatch -J $JOB_NAME \
     --time=03-00:00:00 \
@@ -11,4 +12,4 @@ sbatch -J $JOB_NAME \
     --mem=1600G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
-    jobs/${SCRIPT_NAME}.sh $ALPHA
+    jobs/${SCRIPT_NAME}.sh $COMP_DICT_DIR $FILE_PATH
