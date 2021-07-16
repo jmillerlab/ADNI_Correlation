@@ -25,6 +25,11 @@ def main():
 
     col_types: dict = get_col_types()
     new_comps: list = sorted(listdir(comp_dir))
+
+    for i, file_name in enumerate(list(new_comps)):
+        if not file_name.endswith('.p'):
+            del new_comps[i]
+
     new_comps: str = new_comps[idx]
 
     assert new_comps.endswith('.p')
@@ -44,12 +49,18 @@ def main():
     for (feat1, feat2), p in tqdm(list(new_comps.items())):
         key: tuple = get_comp_key(feat1=feat1, feat2=feat2)
 
-        if len(set(dataset_cols[feat1])) == 1 or len(set(dataset_cols[feat2])) == 1:
+        if dataset_cols[feat1] is None or dataset_cols[feat2] is None:
             # We can't compare features that have only one unique value as a result of the sub setting
             n_skipped += 1
             del new_comps[key]
         else:
-            new_comps[key] = compare(header1=feat1, header2=feat2, dataset_cols=dataset_cols, col_types=col_types)
+            p: float = compare(header1=feat1, header2=feat2, dataset_cols=dataset_cols, col_types=col_types)
+
+            if p == float('inf'):
+                n_skipped += 1
+                del new_comps[key]
+            else:
+                new_comps[key] = p
 
     new_len: int = len(new_comps)
 
@@ -77,7 +88,13 @@ def get_dataset_cols(subset: str, filtered_comps: dict) -> dict:
     dataset_cols: dict = {}
 
     for header in filtered_headers:
-        dataset_cols[header] = list(subset[header])
+        col: list = list(subset[header])
+
+        if len(set(col)) == 1:
+            # We can't compare features that have only one unique value as a result of the sub setting
+            dataset_cols[header] = None
+        else:
+            dataset_cols[header] = col
 
     return dataset_cols
 

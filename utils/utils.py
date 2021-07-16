@@ -171,7 +171,8 @@ def num_nom_test(numbers: list, categories) -> float:
     not_normal: bool = False
 
     for group in table:
-        assert len(group) >= MIN_CAT_SIZE
+        if len(group) < MIN_CAT_SIZE:
+            return float('inf')
 
         if not_normal_distribution(group):
             not_normal: bool = True
