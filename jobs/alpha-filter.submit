@@ -1,18 +1,18 @@
 #!/bin/sh
 
 SCRIPT_NAME="alpha-filter"
-COMP_DICT_DIR="comp-dicts"
+COMP_DICT_DIR="data/comp-dicts"
 ALPHA="5e-324"
 IDX=$1
 SECTION_SIZE=5
-ALPHA_FILTERED_DIR="maximum-filtered"
+ALPHA_FILTERED_DIR="data/maximum-filtered"
 JOB_NAME=${SCRIPT_NAME}-${IDX}-${ALPHA}
 
 sbatch -J $JOB_NAME \
     --time=00-01:00:00 \
     --nodes=1 \
     --ntasks=1 \
-    --mem=64G \
+    --mem=16G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
     jobs/${SCRIPT_NAME}.sh $COMP_DICT_DIR $ALPHA $IDX $SECTION_SIZE $ALPHA_FILTERED_DIR
