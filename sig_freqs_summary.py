@@ -46,7 +46,7 @@ def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, 
 
     save_histogram(
         significance_frequencies=significance_frequencies, n_histogram_bins=n_histogram_bins, alpha=alpha,
-        title='Total', break_y=False, start_break_count=8000, end_break_count=70000, max_count=78000
+        title='Total', break_y=True, start_break_count=8000, end_break_count=70000, max_count=78000
     )
 
     adnimerge_frequencies: DataFrame = significance_frequencies.loc[
@@ -110,8 +110,8 @@ def broken_y_histogram(
 
     fig, (ax1, ax2) = subplots(2, 1, sharex=True)
     fig.subplots_adjust(hspace=0.08)
-    ax1.hist(frequencies, bins=n_histogram_bins, stacked=True, density=True)
-    ax2.hist(frequencies, bins=n_histogram_bins, stacked=True, density=True)
+    ax1.hist(frequencies, bins=n_histogram_bins, stacked=True, density=False)
+    ax2.hist(frequencies, bins=n_histogram_bins, stacked=True, density=False)
     ax1.set_ylim(end_break_count, max_count)
     ax1.set_title(title)
     ax2.set_ylim(0, start_break_count)
