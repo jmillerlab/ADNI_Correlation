@@ -12,7 +12,7 @@ from utils.utils import (
     DOMAIN_KEY, IDX_COL
 )
 
-SUMMARY_DIR: str = 'data/significance-summary/'
+SUMMARY_DIR: str = 'data/sig-freqs-summary/'
 AVG_KEY: str = 'Average'
 STD_KEY: str = 'Standard Deviation'
 MIN_KEY: str = 'Minimum'
