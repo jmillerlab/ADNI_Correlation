@@ -1,15 +1,15 @@
 """Counts the number of features from each domain that were in significant comparisons above and below a threshold"""
 
 from sys import argv
-from pandas import DataFrame, read_csv, Series
+from pandas import DataFrame, Series, read_csv
 from matplotlib.pyplot import subplots, savefig, title as set_title, xlabel, ylabel, legend
 from os import mkdir
 from os.path import join, isdir
 from numpy import mean, std, min, max
 
 from utils.utils import (
-    SIGNIFICANT_FREQUENCIES_CSV_PATH, ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY, ADNIMERGE_FREQ_KEY, EXPRESSION_FREQ_KEY,
-    MRI_FREQ_KEY, TOTAL_FREQ_KEY, DOMAIN_KEY, IDX_COL
+    ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY, ADNIMERGE_FREQ_KEY, EXPRESSION_FREQ_KEY, MRI_FREQ_KEY, TOTAL_FREQ_KEY,
+    DOMAIN_KEY, IDX_COL
 )
 
 SUMMARY_DIR: str = 'data/significance-summary/'
@@ -24,12 +24,12 @@ def main():
 
     alpha: str = argv[1]
     n_histogram_bins: int = int(argv[2])
+    sig_freq_table_path: str = argv[3]
 
     if not isdir(SUMMARY_DIR):
         mkdir(SUMMARY_DIR)
 
-    significance_frequencies: str = SIGNIFICANT_FREQUENCIES_CSV_PATH.format(alpha)
-    significance_frequencies: DataFrame = read_csv(significance_frequencies)
+    significance_frequencies: DataFrame = read_csv(sig_freq_table_path)
 
     print('Number Of Features That Show Up In At Least One Significance Comparison: {} | For Alpha: {}'.format(
         len(significance_frequencies), alpha

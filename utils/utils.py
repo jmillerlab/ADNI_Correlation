@@ -35,7 +35,6 @@ DOMAIN_TABLE_TYPE: str = 'domain'
 MIN_ALPHA: float = 5e-324
 SUBSET_PATH: str = 'data/{}-data.csv'
 SUBSET_COMP_DICTS_PATH: str = 'data/{}-comp-dicts'
-SIGNIFICANT_FREQUENCIES_CSV_PATH: str = 'data/significance-frequencies-{}.csv'
 ADNIMERGE_KEY: str = 'ADNIMERGE'
 EXPRESSION_KEY: str = 'Gene Expression'
 MRI_KEY: str = 'MRI'
