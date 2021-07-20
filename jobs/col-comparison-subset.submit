@@ -3,14 +3,14 @@
 SCRIPT_NAME="col-comparison-subset"
 IDX=$1
 SUBSET=$2
-COMP_DICT_DIR="data/comp-dicts"
+COMP_DICT_DIR="data/maximum-filtered"
 JOB_NAME=$SCRIPT_NAME-${IDX}-${SUBSET}
 
 sbatch -J $JOB_NAME \
-    --time=00-6:00:00 \
+    --time=00-01:00:00 \
     --nodes=1 \
     --ntasks=1 \
-    --mem=64G \
+    --mem=16G \
     -o slurm-output/${JOB_NAME}.out \
     -e slurm-output/${JOB_NAME}.err \
     jobs/${SCRIPT_NAME}.sh $IDX $SUBSET $COMP_DICT_DIR

@@ -2,7 +2,7 @@
 
 SUBSET=$1
 
-for i in {0..2130}
+for i in {0..2955}
 do
     echo $i
     echo $SUBSET
