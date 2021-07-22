@@ -165,28 +165,6 @@ def save_tables(significance_frequencies: DataFrame, alpha: str, freq_key: str):
 
     save_path: str = join(SUMMARY_DIR, 'basic-stats-{}-{}.csv'.format(freq_key.replace(' ', '').lower(), alpha))
     table.to_csv(save_path)
-    freq_thresholds: list = [0, 5, 10, 20, 50, 100, 12017]
-    table: DataFrame = make_start_counts_table(freq_thresholds=freq_thresholds, idx_col=idx_col)
-
-    for i in range(len(significance_frequencies)):
-        row: Series = significance_frequencies.loc[i]
-        feature, _, _, _, total_frequency, domain = row
-
-        for j in range(len(freq_thresholds) - 1):
-            threshold1: int = freq_thresholds[j]
-            threshold2: int = freq_thresholds[j+1]
-
-            if threshold1 < total_frequency <= threshold2:
-                col_key: str = make_col_key(threshold1=threshold1, threshold2=threshold2)
-                table[col_key][domain] += 1
-                break
-        else:
-            assert False, 'the frequency {} for feature {} is not within any of the ranges'.format(
-                total_frequency, feature
-            )
-
-    save_path: str = join(SUMMARY_DIR, 'feature-counts-{}.csv'.format(alpha))
-    table.to_csv(save_path)
 
 
 def set_val(
@@ -201,31 +179,6 @@ def set_val(
     frequencies: Series = frequencies[freq_key]
     val: float = op(frequencies)
     table[header][domain] = val
-
-
-def make_start_counts_table(freq_thresholds: list, idx_col: list) -> DataFrame:
-    """Creates the feature counts table with counts of 0"""
-
-    table: dict = {
-        IDX_COL: idx_col
-    }
-
-    for j in range(len(freq_thresholds) - 1):
-        threshold1: int = freq_thresholds[j]
-        threshold2: int = freq_thresholds[j + 1]
-        header: str = make_col_key(threshold1=threshold1, threshold2=threshold2)
-        table[header] = [0] * len(idx_col)
-
-    table: DataFrame = DataFrame(table)
-    table: DataFrame = table.set_index(IDX_COL)
-    return table
-
-
-def make_col_key(threshold1: int, threshold2: int) -> str:
-    """Makes a header of the table based on a comparison frequency range"""
-
-    header: str = '{} < f <= {}'.format(threshold1, threshold2)
-    return header
 
 
 if __name__ == '__main__':
