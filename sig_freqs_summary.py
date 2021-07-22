@@ -104,7 +104,7 @@ def save_histogram(
     ylabel('Number of Features')
 
     save_path: str = join(
-        SUMMARY_DIR, 'significant-frequencies-{}-{}'.format(title.lower().replace(' ', ''), analysis_name)
+        SUMMARY_DIR, 'significant-frequencies-{}-{}.png'.format(title.lower().replace(' ', ''), analysis_name)
     )
 
     savefig(save_path)
