@@ -22,7 +22,7 @@ MAX_KEY: str = 'Maximum'
 def main():
     """Main method"""
 
-    alpha: str = argv[1]
+    analysis_name: str = argv[1]
     n_histogram_bins: int = int(argv[2])
     sig_freq_table_path: str = argv[3]
 
@@ -31,22 +31,26 @@ def main():
 
     significance_frequencies: DataFrame = read_csv(sig_freq_table_path)
 
-    print('Number Of Features That Show Up In At Least One Significance Comparison: {} | For Alpha: {}'.format(
-        len(significance_frequencies), alpha
+    print('Number Of Features That Show Up In At Least One Significance Comparison: {} | For Analysis: {}'.format(
+        len(significance_frequencies), analysis_name
     ))
 
-    save_histograms(significance_frequencies=significance_frequencies, n_histogram_bins=n_histogram_bins, alpha=alpha)
+    save_histograms(
+        significance_frequencies=significance_frequencies, n_histogram_bins=n_histogram_bins,
+        analysis_name=analysis_name
+    )
 
     for freq_key in [ADNIMERGE_FREQ_KEY, EXPRESSION_FREQ_KEY, MRI_FREQ_KEY, TOTAL_FREQ_KEY]:
-        save_tables(significance_frequencies=significance_frequencies, alpha=alpha, freq_key=freq_key)
+        save_tables(significance_frequencies=significance_frequencies, analysis_name=analysis_name, freq_key=freq_key)
 
 
-def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, alpha: str):
+def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, analysis_name: str):
     """Saves the histograms for the total set of frequencies and the set for each domain"""
 
     save_histogram(
-        significance_frequencies=significance_frequencies, n_histogram_bins=n_histogram_bins, alpha=alpha,
-        title='Total', break_y=True, start_break_count=8000, end_break_count=70000, max_count=78000
+        significance_frequencies=significance_frequencies, n_histogram_bins=n_histogram_bins,
+        analysis_name=analysis_name, title='Total', break_y=True, start_break_count=8000, end_break_count=70000,
+        max_count=78000
     )
 
     adnimerge_frequencies: DataFrame = significance_frequencies.loc[
@@ -54,7 +58,7 @@ def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, 
         ]
 
     save_histogram(
-        significance_frequencies=adnimerge_frequencies, n_histogram_bins=n_histogram_bins, alpha=alpha,
+        significance_frequencies=adnimerge_frequencies, n_histogram_bins=n_histogram_bins, analysis_name=analysis_name,
         title='ADNIMERGE', break_y=False
     )
 
@@ -63,7 +67,7 @@ def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, 
     ]
 
     save_histogram(
-        significance_frequencies=expression_frequencies, n_histogram_bins=n_histogram_bins, alpha=alpha,
+        significance_frequencies=expression_frequencies, n_histogram_bins=n_histogram_bins, analysis_name=analysis_name,
         title='Gene Expression', break_y=False
     )
 
@@ -72,13 +76,13 @@ def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, 
     ]
 
     save_histogram(
-        significance_frequencies=mri_frequencies, n_histogram_bins=n_histogram_bins, alpha=alpha, title='MRI',
-        break_y=True, start_break_count=7000, end_break_count=70000, max_count=77000
+        significance_frequencies=mri_frequencies, n_histogram_bins=n_histogram_bins, analysis_name=analysis_name,
+        title='MRI', break_y=True, start_break_count=7000, end_break_count=70000, max_count=77000
     )
 
 
 def save_histogram(
-    significance_frequencies: DataFrame, n_histogram_bins: int, alpha: str, title: str, break_y: bool,
+    significance_frequencies: DataFrame, n_histogram_bins: int, analysis_name: str, title: str, break_y: bool,
     start_break_count: int = None, end_break_count: int = None, max_count: int = None
 ):
     """Saves a histogram with a broken y-axis"""
@@ -99,7 +103,10 @@ def save_histogram(
     xlabel('Comparison Frequency')
     ylabel('Number of Features')
 
-    save_path: str = join(SUMMARY_DIR, 'significant-frequencies-{}-{}'.format(title.lower().replace(' ', ''), alpha))
+    save_path: str = join(
+        SUMMARY_DIR, 'significant-frequencies-{}-{}'.format(title.lower().replace(' ', ''), analysis_name)
+    )
+
     savefig(save_path)
 
 
@@ -126,7 +133,7 @@ def regular_histogram(frequencies: list, n_histogram_bins: int, title: str):
     legend({ADNIMERGE_KEY: "red", EXPRESSION_KEY: "blue", MRI_KEY: "violet"})
 
 
-def save_tables(significance_frequencies: DataFrame, alpha: str, freq_key: str):
+def save_tables(significance_frequencies: DataFrame, analysis_name: str, freq_key: str):
     """Creates the tables that complement the histograms"""
 
     idx_col: list = [ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY]
@@ -163,7 +170,7 @@ def save_tables(significance_frequencies: DataFrame, alpha: str, freq_key: str):
             freq_key=freq_key
         )
 
-    save_path: str = join(SUMMARY_DIR, 'basic-stats-{}-{}.csv'.format(freq_key.replace(' ', '').lower(), alpha))
+    save_path: str = join(SUMMARY_DIR, 'basic-stats-{}-{}.csv'.format(freq_key.replace(' ', '').lower(), analysis_name))
     table.to_csv(save_path)
 
 
