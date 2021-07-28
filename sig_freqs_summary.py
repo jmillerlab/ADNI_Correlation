@@ -25,6 +25,7 @@ def main():
     analysis_name: str = argv[1]
     n_histogram_bins: int = int(argv[2])
     sig_freq_table_path: str = argv[3]
+    break_y: bool = argv[4] == 'true'
 
     if not isdir(SUMMARY_DIR):
         mkdir(SUMMARY_DIR)
@@ -37,19 +38,19 @@ def main():
 
     save_histograms(
         significance_frequencies=significance_frequencies, n_histogram_bins=n_histogram_bins,
-        analysis_name=analysis_name
+        analysis_name=analysis_name, break_y=break_y
     )
 
     for freq_key in [ADNIMERGE_FREQ_KEY, EXPRESSION_FREQ_KEY, MRI_FREQ_KEY, TOTAL_FREQ_KEY]:
         save_tables(significance_frequencies=significance_frequencies, analysis_name=analysis_name, freq_key=freq_key)
 
 
-def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, analysis_name: str):
+def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, analysis_name: str, break_y: bool):
     """Saves the histograms for the total set of frequencies and the set for each domain"""
 
     save_histogram(
         significance_frequencies=significance_frequencies, n_histogram_bins=n_histogram_bins,
-        analysis_name=analysis_name, title='Total', break_y=True, start_break_count=8000, end_break_count=70000,
+        analysis_name=analysis_name, title='Total', break_y=break_y, start_break_count=8000, end_break_count=70000,
         max_count=78000
     )
 
@@ -77,7 +78,7 @@ def save_histograms(significance_frequencies: DataFrame, n_histogram_bins: int, 
 
     save_histogram(
         significance_frequencies=mri_frequencies, n_histogram_bins=n_histogram_bins, analysis_name=analysis_name,
-        title='MRI', break_y=True, start_break_count=7000, end_break_count=70000, max_count=77000
+        title='MRI', break_y=break_y, start_break_count=7000, end_break_count=70000, max_count=77000
     )
 
 
@@ -171,6 +172,7 @@ def save_tables(significance_frequencies: DataFrame, analysis_name: str, freq_ke
         )
 
     save_path: str = join(SUMMARY_DIR, 'basic-stats-{}-{}.csv'.format(freq_key.replace(' ', '').lower(), analysis_name))
+    table: DataFrame = table.round(2)
     table.to_csv(save_path)
 
 
