@@ -9,7 +9,7 @@ from numpy import mean, std, min, max
 
 from utils.utils import (
     ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY, ADNIMERGE_FREQ_KEY, EXPRESSION_FREQ_KEY, MRI_FREQ_KEY, TOTAL_FREQ_KEY,
-    DOMAIN_KEY, IDX_COL
+    DOMAIN_KEY
 )
 
 SUMMARY_DIR: str = 'data/sig-freqs-summary/'
@@ -17,6 +17,7 @@ AVG_KEY: str = 'Average'
 STD_KEY: str = 'Standard Deviation'
 MIN_KEY: str = 'Minimum'
 MAX_KEY: str = 'Maximum'
+IDX_COL: str = 'Domain'
 
 
 def main():

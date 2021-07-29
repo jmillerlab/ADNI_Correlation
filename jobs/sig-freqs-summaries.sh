@@ -5,3 +5,8 @@ bash jobs/sig-freqs-summary.sh female 100 data/female-sig-freqs.csv true
 bash jobs/sig-freqs-summary.sh 0.0 100 data/0.0-sig-freqs.csv true
 bash jobs/sig-freqs-summary.sh 0.5 100 data/0.5-sig-freqs.csv true
 bash jobs/sig-freqs-summary.sh 1.0 100 data/1.0-sig-freqs.csv true
+bash jobs/sig-freqs-summary.sh male-filtered 100 data/male-filtered-sig-freqs.csv true
+bash jobs/sig-freqs-summary.sh female-filtered 100 data/female-filtered-sig-freqs.csv true
+bash jobs/sig-freqs-summary.sh 0.0-filtered 100 data/0.0-filtered-sig-freqs.csv true
+bash jobs/sig-freqs-summary.sh 0.5-filtered 100 data/0.5-filtered-sig-freqs.csv true
+bash jobs/sig-freqs-summary.sh 1.0-filtered 100 data/1.0-filtered-sig-freqs.csv true
