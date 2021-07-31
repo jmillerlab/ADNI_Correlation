@@ -5,7 +5,7 @@ from pandas import DataFrame, Series, read_csv
 from matplotlib.pyplot import subplots, savefig, title as set_title, xlabel, ylabel, legend
 from os import mkdir
 from os.path import join, isdir
-from numpy import mean, std, min, max
+from numpy import mean, std, min, max, isnan
 
 from utils.utils import (
     ADNIMERGE_KEY, EXPRESSION_KEY, MRI_KEY, ADNIMERGE_FREQ_KEY, EXPRESSION_FREQ_KEY, MRI_FREQ_KEY, TOTAL_FREQ_KEY,
@@ -188,6 +188,10 @@ def set_val(
 
     frequencies: Series = frequencies[freq_key]
     val: float = op(frequencies)
+
+    if isnan(val):
+        val: float = 0.0
+
     table[header][domain] = val
 
 
