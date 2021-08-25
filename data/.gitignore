@@ -8,3 +8,5 @@
 !inter_top_k_results/
 !inter-counts-tables
 !sig-feats.p
+!bonferroni-sig-freqs.csv
+!maximum-sig-freqs.csv
